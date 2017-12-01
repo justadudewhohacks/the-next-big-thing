@@ -1,0 +1,37 @@
+{
+  "name": "opencv4nodejs-next",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --require flow-remove-types/register server.js",
+    "build": "next build",
+    "start": "NODE_ENV=production node server.js",
+    "test": "mocha ./tests --R"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.2",
+    "next": "^4.1.4",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "styled-components": "^2.2.3"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.0.2",
+    "chai": "^4.1.2",
+    "eslint": "^4.11.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-rallycoding": "^3.2.0",
+    "eslint-plugin-flowtype": "^2.39.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.5.1",
+    "flow-remove-types": "^1.2.3",
+    "mocha": "^4.0.1",
+    "sinon": "^4.1.2"
+  }
+}
