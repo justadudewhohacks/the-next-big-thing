@@ -5,11 +5,15 @@ const ToggleIcon = styled.i`
   margin-right: 5px;
 `
 
-const CollapsibleListItems = styled.ul`
+const ListItems = styled.ul`
   ${props => props.css}
 `
 
-const CollapsibleListHeader = styled.div`
+const HeaderText = styled.span`
+  flex-grow: 1;
+`
+
+const ListHeader = styled.div`
   display: flex;
   align-items: center;
   ${props => props.css}
@@ -25,23 +29,29 @@ export default class extends React.Component {
   }
 
   render() {
-    const { header } = this.props;
+    const { header, renderHeaderText } = this.props;
     return (
       <li key={header}>
-        <CollapsibleListHeader
+        <ListHeader
           css={this.props.headerCss}
-          onClick={this.toggle.bind(this)}
         >
-          <ToggleIcon className="material-icons">
+          <ToggleIcon
+            onClick={this.toggle.bind(this)}
+            className="material-icons"
+          >
             {this.state.collapsed ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}
           </ToggleIcon>
-          <span> { header } </span>
-        </CollapsibleListHeader>
+          <HeaderText
+            onClick={this.props.onClickHeaderText}
+          >
+            { renderHeaderText() }
+          </HeaderText>
+        </ListHeader>
         {
           this.state.collapsed ? null :
-          <CollapsibleListItems css={this.props.itemsCss}>
+          <ListItems css={this.props.itemsCss}>
             { this.props.children }
-          </CollapsibleListItems>
+          </ListItems>
         }
       </li>
     )

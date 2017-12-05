@@ -13,9 +13,9 @@ const listCss = css`
 `
 
 const listItemCss = css`
-  padding: 4px;
   cursor: pointer;
   a {
+    padding: 4px;
     color: inherit;
     text-decoration: none;
     display: block;
@@ -62,25 +62,37 @@ const ApiTree = styled.ul`
   overflow-y: auto;
 `
 
-const renderFunctionItem = (fn: string) => (
+const renderFunctionItem = (fn: string, onLinkClicked: string => void) => (
   <FunctionItem key={fn}>
-    <a href={`#${fn}`}>
+    <a
+      href={`#${fn}`}
+      onClick={onLinkClicked}
+    >
       { fn }
     </a>
   </FunctionItem>
 )
 
-const renderClassList = (clazzes : Array<ModuleClass>) => (
+const renderClassHeader = (cvModule: string, onLinkClicked: string => void) => (
+  <a
+    href={`#${cvModule}`}
+    onClick={onLinkClicked}
+  >
+    { cvModule }
+  </a>
+)
+
+const renderClassList = (clazzes : Array<ModuleClass>, onLinkClicked: string => void) => (
   <ClassList>
     {
       clazzes.map(clazz => (
         <CollapsibleList
           key={clazz.className}
-          header={clazz.className}
+          renderHeaderText={() => renderClassHeader(clazz.className, onLinkClicked)}
           headerCss={classListHeaderCss}
           itemsCss={classListItemsCss}
         >
-          { clazz.fnNames.map(renderFunctionItem) }
+          { clazz.fnNames.map(fnName => renderFunctionItem(fnName, onLinkClicked)) }
         </CollapsibleList>
       ))
     }
@@ -88,21 +100,25 @@ const renderClassList = (clazzes : Array<ModuleClass>) => (
 )
 
 type Props = {
-  apiTree: Array<ModuleTree>
+  apiTree: Array<ModuleTree>,
+  onModuleRequested: string => void
 }
 
-export default ({ apiTree }: Props) => (
+export default ({ apiTree, onModuleRequested }: Props) => (
   <ApiTree>
     {
       apiTree.map(cvModule => (
         <CollapsibleList
           key={cvModule.cvModule}
-          header={cvModule.cvModule}
+          renderHeaderText={() => cvModule.cvModule}
           headerCss={moduleListHeaderCss}
+          onClickHeaderText={() => onModuleRequested(cvModule.cvModule)}
           itemsCss={moduleListItemsCss}
         >
-          { renderClassList(cvModule.clazzes) }
-          { cvModule.fnNames.map(renderFunctionItem) }
+          {
+            renderClassList(cvModule.clazzes, () => onModuleRequested(cvModule.cvModule))
+          }
+          { cvModule.fnNames.map(fnName => renderFunctionItem(fnName, () => onModuleRequested(cvModule.cvModule))) }
         </CollapsibleList>
       ))
     }
