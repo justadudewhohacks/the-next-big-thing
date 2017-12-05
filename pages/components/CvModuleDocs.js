@@ -1,5 +1,10 @@
+/* @flow */
+
 import React from 'react'
 import styled from 'styled-components'
+
+import type { FnSignature, Fn, FnsByOwner, FnsByClass } from '../../types'
+import Anchor from './Anchor'
 
 const FnHeading = styled.h4`
 `
@@ -39,11 +44,11 @@ const renderArrayOrComponent = (arrayDepth, component) => (
     : component)
 
 
-const renderType = ({ type, arrayDepth, arrayElements }) =>
+const renderType = ({ type, arrayDepth, numArrayElements }) =>
   renderArrayOrComponent(
     arrayDepth,
     <Type>
-      { `${arrayElements ? `${arrayElements} ` : ''}${type}` }
+      { `${numArrayElements ? `${numArrayElements} ` : ''}${type}` }
     </Type>
   )
 
@@ -102,7 +107,7 @@ const renderParamList = ({ requiredArgs, optionalArgs }) => (
   </span>
 )
 
-const renderSyncFunctionSignature = (signature, fnName) => (
+const renderSyncFunctionSignature = (signature: FnSignature, fnName: string) => (
   <CodeLine>
     { renderReturnValue(signature.returnValues) }
     { <FnName> { fnName } </FnName> }
@@ -112,17 +117,35 @@ const renderSyncFunctionSignature = (signature, fnName) => (
   </CodeLine>
 )
 
-export default ({ fns }) => (
+const renderFunctionSignatures = (fns: Array<Fn>) =>
+  fns.map(fn => (
+    <li key={fn.fnName}>
+      <Anchor name={fn.fnName} />
+      <FnHeading> {fn.fnName} </FnHeading>
+      <Code>
+        { fn.signatures.map(s => renderSyncFunctionSignature(s, fn.fnName)) }
+      </Code>
+    </li>
+  ))
+
+
+const renderClassFunctionSignatures = (fnsByClass: FnsByClass) => (
+  <div>
+    <Anchor name={fnsByClass.className} />
+    <h2> { fnsByClass.className } </h2>
+    { renderFunctionSignatures(fnsByClass.fns) }
+  </div>
+)
+
+type Props = {
+  cvModule: string,
+  fns: FnsByOwner
+}
+
+export default ({ cvModule, fns } : Props) => (
   <CvModuleDocs>
-    {
-      fns.map(fn => (
-        <li key={fn.name}>
-          <FnHeading> {fn.name} </FnHeading>
-          <Code>
-            { fn.signatures.map(s => renderSyncFunctionSignature(s, fn.name)) }
-          </Code>
-        </li>
-      ))
-    }
+    <h1> { cvModule } </h1>
+    { fns.fnsByClasses.map(renderClassFunctionSignatures) }
+    { renderFunctionSignatures(fns.cvFns) }
   </CvModuleDocs>
 )

@@ -1,72 +1,99 @@
 /* @flow */
 
-const path = require('path')
+import type { FnMetaData, Fn, FnsByOwner, ModuleTree } from '../types'
+
 const {
-  makeFindAllSignatures,
-  makeFindSignaturesByModule
+  docsFinderService
 } = require('../services')
 
+const isClassFunction = s => s.owner !== 'cv'
+const isCvFunction = s => !isClassFunction(s)
+
+const extractClasses = function (fns: Array<FnMetaData>) : Array<string> {
+  return Array.from(new Set(
+    fns.filter(isClassFunction).map(s => s.owner)
+  ))
+}
+
 const makeGetAPITree = function (
-  findAllSignatures: void =>
-    Array<{
-      cvModule: string,
-      className: string,
-      name: string,
-      clazz?: string
-    }>,
-  allModules: Array<string>
+  allModules: Array<string>,
+  findAllFunctions: void => Promise<Array<FnMetaData>>
 ) {
-  return function () {
-    const allSignatures = findAllSignatures()
+  return async function () : Promise<Array<ModuleTree>> {
+    const allFunctions = await findAllFunctions()
 
-    return allModules.map((cvModule) => {
-      const signatures = allSignatures.filter(s => cvModule === s.cvModule)
+    const cvModuleTrees = allModules.map((cvModule) => {
+      const functions = allFunctions.filter(s => cvModule === s.cvModule)
 
-      const moduleClasses = new Set(
-        signatures.filter(s => !!s.clazz).map(s => s.clazz)
-      )
-      const clazzes = Array.from(moduleClasses).map(c => ({
+      const clazzes = extractClasses(functions).map(c => ({
         className: c,
-        fns: signatures.filter(s => c === s.clazz).map(s => s.name)
+        fnNames: functions.filter(s => c === s.owner).map(s => s.fnName)
       }))
-
-      console.log(moduleClasses)
-      console.log(signatures.filter(s => !s.clazz).map(s => s.name))
 
       return ({
         cvModule,
         clazzes,
-        fns: signatures.filter(s => !s.clazz).map(s => s.name)
+        fnNames: functions.filter(isCvFunction).map(s => s.fnName)
       })
-    }).filter(m => !!m.clazzes.length || !!m.fns.length)
+    }).filter(m => !!m.clazzes.length || !!m.fnNames.length)
+
+    return cvModuleTrees
+  }
+}
+
+const makeGetFunctionsByModule = function (findFunctionsByModule: string => Promise<Array<Fn>>) {
+  return async function (cvModule: string) : Promise<FnsByOwner> {
+    // TODO: figure out how to cast intersection types
+    const functionsByModule: Array<any> = await findFunctionsByModule(cvModule)
+    const fnsByClasses = extractClasses(functionsByModule).map(c => ({
+      className: c,
+      fns: functionsByModule.filter(s => c === s.owner)
+    }))
+
+    return ({
+      fnsByClasses,
+      cvFns: functionsByModule.filter(isCvFunction)
+    })
   }
 }
 
 exports.makeGetAPITree = makeGetAPITree
 
 exports.create = function (
-  { Router, app, publicDir } : { Router : any, app : any, publicDir : string }
+  { Router, app }: { Router: any, app: any, publicDir: string }
 ) {
-  const findAllSignatures = makeFindAllSignatures(path.join(publicDir, '_docs'))
-  const findSignaturesByModule = makeFindSignaturesByModule(path.join(publicDir, '_docs'))
+  const {
+    findAllFunctions,
+    findFunctionsByModule
+  } = docsFinderService
 
   const allModules = ['core', 'imgproc', 'calib3d']
-  const getAPITree = makeGetAPITree(findAllSignatures, allModules)
+  const getAPITree = makeGetAPITree(allModules, findAllFunctions)
+  const getFunctionsByModule = makeGetFunctionsByModule(findFunctionsByModule)
 
-  const handleDocsPage = (cvModule : string, onInvalidModule: () => any) => {
-    if (!allModules.some(m => m === cvModule)) {
-      return onInvalidModule();
+  async function renderDocsPage(req, res) {
+    try {
+      const { cvModule } = req.params
+      if (!allModules.some(m => m === cvModule)) {
+        app.render(req, res, '/Error404Page')
+        return
+      }
+
+      const data = {
+        apiTree: await getAPITree(),
+        cvModuleFns: await getFunctionsByModule(cvModule),
+        cvModule
+      }
+      app.render(req, res, '/DocsPage', data)
+    } catch (err) {
+      console.error(err)
+      res.status(505).send()
     }
-
-    return ({
-      apiTree: getAPITree(),
-      cvModuleFns: findSignaturesByModule(cvModule)
-    })
   }
 
   const router = Router();
   router.get('/', (req, res) => res.redirect('/docs/core'))
-  router.get('/:cvModule', (req, res) => app.render(req, res, '/DocsPage', handleDocsPage(req.params.cvModule, () => res.send(404))))
+  router.get('/:cvModule', renderDocsPage)
 
   return router
 }

@@ -1,7 +1,12 @@
+/* @flow */
+
 import React from 'react'
 import styled from 'styled-components'
 import ApiTree from './components/ApiTree'
 import CvModuleDocs from './components/CvModuleDocs'
+
+import type { ModuleTree, FnsByOwner } from '../../types'
+
 
 const PageContainer = styled.div`
   font-family: 'Open Sans', sans-serif;
@@ -18,13 +23,22 @@ const Content = styled.div`
   overflow-y: auto;
 `
 
-export default ({ url: { query: { apiTree, cvModuleFns } } }) => (
-  <PageContainer>
-    <ApiTree apiTree={apiTree} />
-    <Content>
-      <CvModuleDocs fns={cvModuleFns} />
-      Lorem isafjdsogjfdiuhgpo odf jg dfj ewuifhdui ohdfui
-    </Content>
+type Query = {
+  apiTree: Array<ModuleTree>,
+  cvModuleFns: FnsByOwner,
+  cvModule: string
+}
 
-  </PageContainer>
-)
+export default ({ url: { query } } : { url: { query: Query } }) => {
+  return (
+    <PageContainer>
+      <ApiTree apiTree={query.apiTree} />
+      <Content>
+        <CvModuleDocs fns={query.cvModuleFns} cvModule={query.cvModule} />
+        Lorem isafjdsogjfdiuhgpo odf jg dfj ewuifhdui ohdfui
+      </Content>
+
+    </PageContainer>
+  )
+}
+

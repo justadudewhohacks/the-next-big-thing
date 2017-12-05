@@ -33,7 +33,7 @@ export default class extends React.Component {
           onClick={this.toggle.bind(this)}
         >
           <ToggleIcon className="material-icons">
-            {this.state.collapsed ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}
+            {this.state.collapsed ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}
           </ToggleIcon>
           <span> { header } </span>
         </CollapsibleListHeader>

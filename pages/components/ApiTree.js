@@ -1,8 +1,10 @@
+/* @flow */
+
 import React from 'react'
-import Link from 'next/link'
 import styled, { css } from 'styled-components'
 
 import CollapsibleList from './CollapsibleList'
+import type { ModuleClass, ModuleTree } from '../../types'
 
 const listCss = css`
   list-style: none;
@@ -60,15 +62,15 @@ const ApiTree = styled.ul`
   overflow-y: auto;
 `
 
-const renderFunctionItem = fn => (
+const renderFunctionItem = (fn: string) => (
   <FunctionItem key={fn}>
-    <Link href={`#${fn}`}>
+    <a href={`#${fn}`}>
       { fn }
-    </Link>
+    </a>
   </FunctionItem>
 )
 
-const renderClassList = clazzes => (
+const renderClassList = (clazzes : Array<ModuleClass>) => (
   <ClassList>
     {
       clazzes.map(clazz => (
@@ -78,14 +80,18 @@ const renderClassList = clazzes => (
           headerCss={classListHeaderCss}
           itemsCss={classListItemsCss}
         >
-          { clazz.fns.map(renderFunctionItem) }
+          { clazz.fnNames.map(renderFunctionItem) }
         </CollapsibleList>
       ))
     }
   </ClassList>
 )
 
-export default ({ apiTree }) => (
+type Props = {
+  apiTree: Array<ModuleTree>
+}
+
+export default ({ apiTree }: Props) => (
   <ApiTree>
     {
       apiTree.map(cvModule => (
@@ -96,7 +102,7 @@ export default ({ apiTree }) => (
           itemsCss={moduleListItemsCss}
         >
           { renderClassList(cvModule.clazzes) }
-          { cvModule.fns.map(renderFunctionItem) }
+          { cvModule.fnNames.map(renderFunctionItem) }
         </CollapsibleList>
       ))
     }

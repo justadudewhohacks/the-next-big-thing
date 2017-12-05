@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node --require flow-remove-types/register server.js",
+    "dev": "nodemon -w server.js --require flow-remove-types/register server.js",
     "build": "next build",
     "start": "NODE_ENV=production node server.js",
     "test": "mocha ./tests --R"
@@ -13,8 +13,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.5.1",
     "express": "^4.16.2",
+    "mongoose": "^4.13.5",
     "next": "^4.1.4",
+    "nodemon": "^1.12.4",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "styled-components": "^2.2.3"
