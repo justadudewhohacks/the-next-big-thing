@@ -4,7 +4,7 @@ import React from 'react'
 import styled, { css } from 'styled-components'
 
 import CollapsibleList from './CollapsibleList'
-import type { ModuleClass, ModuleTree } from '../../types'
+import type { CvModuleClassFunctions, ModuleTree } from '../../types'
 
 const listCss = css`
   list-style: none;
@@ -82,7 +82,7 @@ const renderClassHeader = (cvModule: string, onLinkClicked: string => void) => (
   </a>
 )
 
-const renderClassList = (clazzes : Array<ModuleClass>, onLinkClicked: string => void) => (
+const renderClassList = (clazzes : Array<CvModuleClassFunctions>, onLinkClicked: string => void) => (
   <ClassList>
     {
       clazzes.map(clazz => (

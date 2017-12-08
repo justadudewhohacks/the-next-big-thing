@@ -3,7 +3,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import type { FnSignature, Fn, FnsByOwner, FnsByClass } from '../../types'
+import type { FnSignature, Fn, CvModule, CvModuleClassInfo } from '../../types'
 import Anchor from './Anchor'
 
 const FnHeading = styled.h4`
@@ -128,24 +128,24 @@ const renderFunctionSignatures = (fns: Array<Fn>) =>
     </li>
   ))
 
-
-const renderClassFunctionSignatures = (fnsByClass: FnsByClass) => (
+const renderClassInfo = (cvModuleClassInfo: CvModuleClassInfo) => (
   <div>
-    <Anchor name={fnsByClass.className} />
-    <h2> { fnsByClass.className } </h2>
-    { renderFunctionSignatures(fnsByClass.fns) }
+    <Anchor name={cvModuleClassInfo.className} />
+    <h2> { cvModuleClassInfo.className } </h2>
+    { renderFunctionSignatures(cvModuleClassInfo.classFns) }
   </div>
 )
 
 type Props = {
   cvModule: string,
-  fns: FnsByOwner
+  cvModuleDocs: CvModule
 }
 
-export default ({ cvModule, fns } : Props) => (
+export default ({ cvModule, cvModuleDocs } : Props) => (
   <CvModuleDocs>
     <h1> { cvModule } </h1>
-    { fns.fnsByClasses.map(renderClassFunctionSignatures) }
-    { renderFunctionSignatures(fns.cvFns) }
+    { cvModuleDocs.cvClasses.map(renderClassInfo) }
+    <h2> { `${cvModule} functions` } </h2>
+    { renderFunctionSignatures(cvModuleDocs.cvFns) }
   </CvModuleDocs>
 )

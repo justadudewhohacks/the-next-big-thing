@@ -1,10 +1,4 @@
-const declType = {
-  type: { type: String, required: true },
-  name: { type: String, required: true },
-  defaultValue: { type: String },
-  arrayDepth: { type: Number },
-  numArrayElements: { type: Number }
-}
+const declarationType = require('./declarationType')
 
 const makeFnSchema = mongoose => new mongoose.Schema({
   fnName: { type: String, required: true },
@@ -13,9 +7,9 @@ const makeFnSchema = mongoose => new mongoose.Schema({
   hasAsync: { type: Boolean, required: true },
   signatures: [
     {
-      returnValues: { type: [declType] },
-      optionalArgs: { type: [declType] },
-      requiredArgs: { type: [declType] },
+      returnValues: { type: [declarationType] },
+      optionalArgs: { type: [declarationType] },
+      requiredArgs: { type: [declarationType] },
       allArgs: { type: String }
     }
   ]

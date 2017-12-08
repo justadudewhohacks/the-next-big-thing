@@ -18,15 +18,26 @@ export type Fn = FnMetaData & {
 
 export type FnsByClass = {
   className: string,
-  fns: Array<Fn>
+  classFns: Array<Fn>
 }
 
-export type FnsByOwner = {
-  fnsByClasses: Array<FnsByClass>,
+export type CvModuleClass = {
+  className: string,
+  cvModule: string,
+  fields: Array<any>,
+  constructors: Array<FnSignature>
+}
+
+export type CvModuleClassInfo = CvModuleClass & {
+  classFns: Array<Fn>
+}
+
+export type CvModule = {
+  cvClasses: Array<CvModuleClassInfo>,
   cvFns: Array<Fn>
 }
 
-export type ModuleClass = {
+export type CvModuleClassFunctions = {
   className: string,
   fnNames: Array<string>
 }
@@ -34,5 +45,5 @@ export type ModuleClass = {
 export type ModuleTree = {
   cvModule: string,
   fnNames: Array<string>,
-  clazzes: Array<ModuleClass>
+  clazzes: Array<CvModuleClassFunctions>
 }

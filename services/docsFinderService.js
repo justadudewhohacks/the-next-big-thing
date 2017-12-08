@@ -12,11 +12,18 @@ const makeFindFunctionsByModule = function (functionModel: any) {
   }
 }
 
+const makeFindClassesByModule = function (classModel: any) {
+  return async function (cvModule: string) {
+    return classModel.find({ cvModule }, null, { sort: { className: 1 } })
+  }
+}
+
 module.exports = function (
   { functionModel, classModel } : { functionModel: any, classModel: any }
 ) {
   return ({
     findAllFunctions: makeFindAllFunctions(functionModel),
-    findFunctionsByModule: makeFindFunctionsByModule(functionModel)
+    findFunctionsByModule: makeFindFunctionsByModule(functionModel),
+    findClassesByModule: makeFindClassesByModule(classModel)
   })
 }

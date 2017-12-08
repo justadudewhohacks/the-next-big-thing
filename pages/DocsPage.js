@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import ApiTree from './components/ApiTree'
 import CvModuleDocs from './components/CvModuleDocs'
 
-import type { ModuleTree, FnsByOwner } from '../../types'
+import type { ModuleTree, CvModule } from '../types'
 
 
 const PageContainer = styled.div`
@@ -26,7 +26,7 @@ const Content = styled.div`
 
 type Query = {
   apiTree: Array<ModuleTree>,
-  cvModuleFns: FnsByOwner,
+  cvModuleDocs: CvModule,
   cvModule: string
 }
 
@@ -38,6 +38,7 @@ const makeOnModuleRequested = (cvModule: string) =>
   }
 
 export default ({ url: { query } } : { url: { query: Query } }) => {
+  console.log(query.cvModuleDocs)
   return (
     <PageContainer>
       <ApiTree
@@ -46,7 +47,7 @@ export default ({ url: { query } } : { url: { query: Query } }) => {
       />
       <Content>
         <CvModuleDocs
-          fns={query.cvModuleFns}
+          cvModuleDocs={query.cvModuleDocs}
           cvModule={query.cvModule}
         />
       </Content>

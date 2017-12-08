@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { FnMetaData, Fn, FnsByOwner, ModuleTree } from '../types'
+import type { FnMetaData, Fn, CvModule, CvModuleClass, ModuleTree } from '../types'
 
 const {
   docsFinderService
@@ -9,13 +9,13 @@ const {
 const isClassFunction = s => s.owner !== 'cv'
 const isCvFunction = s => !isClassFunction(s)
 
-const extractClasses = function (fns: Array<FnMetaData>) : Array<string> {
+function extractClasses(fns: Array<FnMetaData>) : Array<string> {
   return Array.from(new Set(
     fns.filter(isClassFunction).map(s => s.owner)
   ))
 }
 
-const makeGetAPITree = function (
+function makeGetAPITree(
   allModules: Array<string>,
   findAllFunctions: void => Promise<Array<FnMetaData>>
 ) {
@@ -41,19 +41,25 @@ const makeGetAPITree = function (
   }
 }
 
-const makeGetFunctionsByModule = function (findFunctionsByModule: string => Promise<Array<Fn>>) {
-  return async function (cvModule: string) : Promise<FnsByOwner> {
+function makeGetCvModuleDocs(
+  findFunctionsByModule: string => Promise<Array<Fn>>,
+  findClassesByModule: string => Promise<Array<CvModuleClass>>
+) {
+  return async function (cvModule: string) : Promise<CvModule> {
     // TODO: figure out how to cast intersection types
     const functionsByModule: Array<any> = await findFunctionsByModule(cvModule)
-    const fnsByClasses = extractClasses(functionsByModule).map(c => ({
-      className: c,
-      fns: functionsByModule.filter(s => c === s.owner)
+
+    const cvClasses = (await findClassesByModule(cvModule)).map(c => ({
+      className: c.className,
+      fields: c.fields,
+      constructors: c.constructors,
+      cvModule,
+      classFns: functionsByModule.filter(s => c.className === s.owner)
     }))
 
-    return ({
-      fnsByClasses,
-      cvFns: functionsByModule.filter(isCvFunction)
-    })
+    const cvFns = functionsByModule.filter(isCvFunction)
+
+    return { cvClasses, cvFns }
   }
 }
 
@@ -64,12 +70,13 @@ exports.create = function (
 ) {
   const {
     findAllFunctions,
-    findFunctionsByModule
+    findFunctionsByModule,
+    findClassesByModule
   } = docsFinderService
 
   const allModules = ['core', 'imgproc', 'calib3d']
   const getAPITree = makeGetAPITree(allModules, findAllFunctions)
-  const getFunctionsByModule = makeGetFunctionsByModule(findFunctionsByModule)
+  const getCvModuleDocs = makeGetCvModuleDocs(findFunctionsByModule, findClassesByModule)
 
   async function renderDocsPage(req, res) {
     try {
@@ -81,7 +88,7 @@ exports.create = function (
 
       const data = {
         apiTree: await getAPITree(),
-        cvModuleFns: await getFunctionsByModule(cvModule),
+        cvModuleDocs: await getCvModuleDocs(cvModule),
         cvModule
       }
       app.render(req, res, '/DocsPage', data)
