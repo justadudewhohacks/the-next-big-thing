@@ -3,7 +3,11 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import type { FnSignature, Fn, CvModule, CvModuleClassInfo } from '../../types'
+import type { CvModuleT } from '@/types/CvModule'
+import type { CvClassWithFnsT } from '@/types/CvClassWithFns'
+import type { CvFnT } from '@/types/CvFn'
+import type { CvFnSignatureT } from '@/types/CvFnSignature'
+
 import Anchor from './Anchor'
 
 const FnHeading = styled.h4`
@@ -26,7 +30,7 @@ const CodeLine = styled.div`
   white-space: nowrap;
 `
 
-const CvModuleDocs = styled.ul`
+const ModuleDocs = styled.ul`
   padding: 10px;
   margin: 0;
 `
@@ -107,7 +111,7 @@ const renderParamList = ({ requiredArgs, optionalArgs }) => (
   </span>
 )
 
-const renderSyncFunctionSignature = (signature: FnSignature, fnName: string) => (
+const renderSyncFunctionSignature = (signature: CvFnSignatureT, fnName: string) => (
   <CodeLine>
     { renderReturnValue(signature.returnValues) }
     { <FnName> { fnName } </FnName> }
@@ -117,7 +121,7 @@ const renderSyncFunctionSignature = (signature: FnSignature, fnName: string) => 
   </CodeLine>
 )
 
-const renderFunctionSignatures = (fns: Array<Fn>) =>
+const renderFunctionSignatures = (fns: Array<CvFnT>) =>
   fns.map(fn => (
     <li key={fn.fnName}>
       <Anchor name={fn.fnName} />
@@ -128,7 +132,7 @@ const renderFunctionSignatures = (fns: Array<Fn>) =>
     </li>
   ))
 
-const renderClassInfo = (cvModuleClassInfo: CvModuleClassInfo) => (
+const renderClassInfo = (cvModuleClassInfo: CvClassWithFnsT) => (
   <div>
     <Anchor name={cvModuleClassInfo.className} />
     <h2> { cvModuleClassInfo.className } </h2>
@@ -138,14 +142,14 @@ const renderClassInfo = (cvModuleClassInfo: CvModuleClassInfo) => (
 
 type Props = {
   cvModule: string,
-  cvModuleDocs: CvModule
+  cvModuleDocs: CvModuleT
 }
 
 export default ({ cvModule, cvModuleDocs } : Props) => (
-  <CvModuleDocs>
+  <ModuleDocs>
     <h1> { cvModule } </h1>
     { cvModuleDocs.cvClasses.map(renderClassInfo) }
     <h2> { `${cvModule} functions` } </h2>
     { renderFunctionSignatures(cvModuleDocs.cvFns) }
-  </CvModuleDocs>
+  </ModuleDocs>
 )

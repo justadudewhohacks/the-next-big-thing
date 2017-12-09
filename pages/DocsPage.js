@@ -3,11 +3,12 @@
 import React from 'react'
 import Router from 'next/router';
 import styled from 'styled-components'
+
+import type { CvModuleTreeT } from '@/types/CvModuleTree'
+import type { CvModuleT } from '@/types/CvModule'
+
 import ApiTree from './components/ApiTree'
-import CvModuleDocs from './components/CvModuleDocs'
-
-import type { ModuleTree, CvModule } from '../types'
-
+import ModuleDocs from './components/ModuleDocs'
 
 const PageContainer = styled.div`
   font-family: 'Open Sans', sans-serif;
@@ -20,13 +21,13 @@ const PageContainer = styled.div`
 
 const Content = styled.div`
   width: 100%;
-  max-width: 600px;
+  max-width: 680px;
   overflow-y: auto;
 `
 
 type Query = {
-  apiTree: Array<ModuleTree>,
-  cvModuleDocs: CvModule,
+  apiTree: Array<CvModuleTreeT>,
+  cvModuleDocs: CvModuleT,
   cvModule: string
 }
 
@@ -38,7 +39,6 @@ const makeOnModuleRequested = (cvModule: string) =>
   }
 
 export default ({ url: { query } } : { url: { query: Query } }) => {
-  console.log(query.cvModuleDocs)
   return (
     <PageContainer>
       <ApiTree
@@ -46,7 +46,7 @@ export default ({ url: { query } } : { url: { query: Query } }) => {
         onModuleRequested={makeOnModuleRequested(query.cvModule)}
       />
       <Content>
-        <CvModuleDocs
+        <ModuleDocs
           cvModuleDocs={query.cvModuleDocs}
           cvModule={query.cvModule}
         />

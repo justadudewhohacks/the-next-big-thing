@@ -13,15 +13,28 @@
     "semi": 0,
     "radix": 0,
     "react/jsx-filename-extension": 0,
-    "react/prop-types": 0
+    "react/prop-types": 0,
+
+    // babel-plugin-root-import
+    "import/no-unresolved": [ "error", { "ignore": [ "^@" ] } ],
+    "import/extensions": [ "error", { "ignore": [ "^@" ] } ],
+
+    // flowtype
+    "flowtype/require-return-type": [
+      "error",
+      "always",
+      {
+        "excludeArrowFunctions": true
+      }
+    ]
   },
-  "parser": "babel-eslint",
-  "plugins": [
-    "flowtype"
-  ],
   "env": {
     "es6": true,
     "node": true,
     "mocha": true
-  }
+  },
+  "parser": "babel-eslint",
+  "plugins": [
+    "flowtype"
+  ]
 }

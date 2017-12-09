@@ -3,8 +3,7 @@
 const mongoose = require('mongoose')
 mongoose.Promise = require('bluebird')
 const makeDocsFinderService = require('./docsFinderService')
-const makeFunctionModel = require('./models/functionModel')
-const makeClassModel = require('./models/classModel')
+const makeSchemas = require('./schemas')
 
 const connect = (mlabUser: string, mlabPw: string) : Promise<any> =>
   new Promise((resolve, reject) => {
@@ -14,9 +13,6 @@ const connect = (mlabUser: string, mlabPw: string) : Promise<any> =>
     db.once('open', res => resolve(res))
   })
 
-exports.docsFinderService = makeDocsFinderService({
-  functionModel: makeFunctionModel(mongoose),
-  classModel: makeClassModel(mongoose)
-})
+exports.docsFinderService = makeDocsFinderService(makeSchemas(mongoose))
 
 exports.connect = connect

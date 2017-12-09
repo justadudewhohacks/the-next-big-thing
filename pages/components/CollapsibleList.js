@@ -28,7 +28,7 @@ export default class extends React.Component {
     this.setState({ collapsed: !this.state.collapsed })
   }
 
-  render() {
+  render() : any {
     const { header, renderHeaderText } = this.props;
     return (
       <li key={header}>

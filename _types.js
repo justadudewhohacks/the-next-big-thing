@@ -42,6 +42,10 @@ export type CvModuleClassFunctions = {
   fnNames: Array<string>
 }
 
+
+
+
+
 export type ModuleTree = {
   cvModule: string,
   fnNames: Array<string>,

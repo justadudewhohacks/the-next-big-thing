@@ -3,8 +3,10 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
 
+import type { CvModuleTreeT } from '@/types/CvModuleTree'
+import type { CvClassInfoT } from '@/types/CvClassInfo'
+
 import CollapsibleList from './CollapsibleList'
-import type { CvModuleClassFunctions, ModuleTree } from '../../types'
 
 const listCss = css`
   list-style: none;
@@ -82,7 +84,7 @@ const renderClassHeader = (cvModule: string, onLinkClicked: string => void) => (
   </a>
 )
 
-const renderClassList = (clazzes : Array<CvModuleClassFunctions>, onLinkClicked: string => void) => (
+const renderClassList = (clazzes : Array<CvClassInfoT>, onLinkClicked: string => void) => (
   <ClassList>
     {
       clazzes.map(clazz => (
@@ -92,7 +94,7 @@ const renderClassList = (clazzes : Array<CvModuleClassFunctions>, onLinkClicked:
           headerCss={classListHeaderCss}
           itemsCss={classListItemsCss}
         >
-          { clazz.fnNames.map(fnName => renderFunctionItem(fnName, onLinkClicked)) }
+          { clazz.classFnNames.map(fnName => renderFunctionItem(fnName, onLinkClicked)) }
         </CollapsibleList>
       ))
     }
@@ -100,7 +102,7 @@ const renderClassList = (clazzes : Array<CvModuleClassFunctions>, onLinkClicked:
 )
 
 type Props = {
-  apiTree: Array<ModuleTree>,
+  apiTree: Array<CvModuleTreeT>,
   onModuleRequested: string => void
 }
 
@@ -116,9 +118,9 @@ export default ({ apiTree, onModuleRequested }: Props) => (
           itemsCss={moduleListItemsCss}
         >
           {
-            renderClassList(cvModule.clazzes, () => onModuleRequested(cvModule.cvModule))
+            renderClassList(cvModule.cvClasses, () => onModuleRequested(cvModule.cvModule))
           }
-          { cvModule.fnNames.map(fnName => renderFunctionItem(fnName, () => onModuleRequested(cvModule.cvModule))) }
+          { cvModule.cvFnNames.map(fnName => renderFunctionItem(fnName, () => onModuleRequested(cvModule.cvModule))) }
         </CollapsibleList>
       ))
     }
