@@ -1,7 +1,7 @@
 /* @flow */
 
 import React from 'react'
-import Router from 'next/router';
+import Router from 'next/router'
 import styled from 'styled-components'
 
 import type { CvModuleTreeT } from '@/types/CvModuleTree'
@@ -15,6 +15,7 @@ const PageContainer = styled.div`
   position: fixed;
   width: 100%;
   height: 100%;
+  padding: 5px;
   display: flex;
   justify-content: center;
 `

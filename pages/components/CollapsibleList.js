@@ -19,7 +19,23 @@ const ListHeader = styled.div`
   ${props => props.css}
 `
 
-export default class extends React.Component {
+type Props = {
+  header: string,
+  renderHeaderText: void => any
+}
+
+type State = {
+  collapsed: boolean
+}
+
+export default class extends React.Component<Props, State> {
+  toggle: Function
+
+  constructor(props: Props) {
+    super(props)
+    this.toggle = this.toggle.bind(this)
+  }
+
   state = {
     collapsed: false
   }
@@ -29,14 +45,14 @@ export default class extends React.Component {
   }
 
   render() : any {
-    const { header, renderHeaderText } = this.props;
+    const { header, renderHeaderText } = this.props
     return (
       <li key={header}>
         <ListHeader
           css={this.props.headerCss}
         >
           <ToggleIcon
-            onClick={this.toggle.bind(this)}
+            onClick={this.toggle}
             className="material-icons"
           >
             {this.state.collapsed ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}
