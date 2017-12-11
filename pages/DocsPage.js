@@ -21,9 +21,10 @@ const PageContainer = styled.div`
 `
 
 const Content = styled.div`
+  height: 100%;
   width: 100%;
+  box-sizing: border-box;
   max-width: 680px;
-  overflow-y: auto;
 `
 
 type Query = {

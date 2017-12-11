@@ -56,7 +56,7 @@ const ClassList = styled.ul`
 
 const ModuleList = styled.ul`
   ${listCss}
-  font-size: 12px;
+  font-size: 14px;
   padding: 0;
   display: inline-block;
   background: #fafafa;
@@ -64,8 +64,8 @@ const ModuleList = styled.ul`
 `
 
 const ApiTree = styled.div`
-  width: 250px;
-  min-width: 250px;
+  width: 260px;
+  min-width: 260px;
   display: flex;
   flex-direction: column;
 `

@@ -18,6 +18,7 @@ const SearchField = styled.div`
 
   i {
     margin-left: 5px;
+    cursor: pointer;
   }
 `
 

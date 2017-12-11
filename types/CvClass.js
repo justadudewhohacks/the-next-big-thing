@@ -1,19 +1,18 @@
 /* @flow */
 
 import Arg from './Arg'
-import type { ArgT } from './Arg'
 import TypeAndName from './TypeAndName'
 import type { TypeAndNameT } from './TypeAndName'
+import type { ConstructorT } from './Constructor'
+
 
 export type CvClassT = {
   className: string,
   cvModule: string,
   fields: Array<TypeAndNameT>,
-  constructors: {
-    optionalArgs: Array<ArgT>,
-    requiredArgs: Array<ArgT>
-  }
+  constructors: Array<ConstructorT>
 }
+
 
 const CvClass = {
   className: { type: String, required: true, unique: true },
@@ -22,7 +21,8 @@ const CvClass = {
   constructors: {
     type: [{
       optionalArgs: { type: [Arg] },
-      requiredArgs: { type: [Arg] }
+      requiredArgs: { type: [Arg] },
+      returnsOther: String
     }],
     required: true
   }
