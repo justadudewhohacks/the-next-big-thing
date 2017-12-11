@@ -15,6 +15,12 @@ const makeFindFunctionsByModule = function (FnSchema: any) : string => Promise<A
   }
 }
 
+const makeFindAllClasses = function (ClassSchema: any) : void => Promise<Array<CvClassT>> {
+  return async function () : Promise<Array<CvClassT>> {
+    return ClassSchema.find({}, null, { sort: { className: 1 } })
+  }
+}
+
 const makeFindClassesByModule = function (ClassSchema: any) : string => Promise<Array<CvClassT>> {
   return async function (cvModule: string) : Promise<Array<CvClassT>> {
     return ClassSchema.find({ cvModule }, null, { sort: { className: 1 } })
@@ -26,11 +32,13 @@ module.exports = function (
 ) : {
   findAllFunctions: void => Promise<Array<CvFnT>>,
   findFunctionsByModule: string => Promise<Array<CvFnT>>,
+  findAllClasses: void => Promise<Array<CvClassT>>,
   findClassesByModule: string => Promise<Array<CvClassT>>
 } {
   return ({
     findAllFunctions: makeFindAllFunctions(FnSchema),
     findFunctionsByModule: makeFindFunctionsByModule(FnSchema),
+    findAllClasses: makeFindAllClasses(ClassSchema),
     findClassesByModule: makeFindClassesByModule(ClassSchema)
   })
 }

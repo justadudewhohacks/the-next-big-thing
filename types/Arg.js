@@ -1,19 +1,15 @@
 /* @flow */
 
-import TypeAndName from './TypeAndName'
-import type { TypeAndNameT } from './TypeAndName'
+import Declaration from './Declaration'
+import type { DeclarationT } from './Declaration'
 
-export type ArgT = TypeAndNameT & {
-  defaultValue?: string,
-  arrayDepth?: number,
-  numArrayElements?: number
+export type ArgT = DeclarationT & {
+  defaultValue?: string
 }
 
 const Arg = {
-  ...TypeAndName,
-  defaultValue: { type: String },
-  arrayDepth: { type: Number },
-  numArrayElements: { type: Number }
+  ...Declaration,
+  defaultValue: { type: String }
 }
 
 module.exports = Arg

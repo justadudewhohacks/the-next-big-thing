@@ -20,15 +20,18 @@ function extractClasses(fns: Array<CvFnT>) : Array<string> {
 
 function makeGetApiTree(
   allModules: Array<string>,
-  findAllFunctions: void => Promise<Array<CvFnT>>
+  findAllFunctions: void => Promise<Array<CvFnT>>,
+  findAllClasses: void => Promise<Array<CvClassT>>
 ) : void => Promise<Array<CvModuleTreeT>> {
   return async function () : Promise<Array<CvModuleTreeT>> {
     const allFunctions = await findAllFunctions()
+    const allClasses = await findAllClasses()
 
     const cvModuleTrees = allModules.map((cvModule) => {
       const functions = allFunctions.filter(s => cvModule === s.cvModule)
+      const classNames = allClasses.filter(s => cvModule === s.cvModule).map(c => c.className)
 
-      const cvClasses = extractClasses(functions).map(c => ({
+      const cvClasses = classNames.map(c => ({
         className: c,
         classFnNames: functions.filter(s => c === s.owner).map(s => s.fnName)
       }))
@@ -38,7 +41,7 @@ function makeGetApiTree(
         cvClasses,
         cvFnNames: functions.filter(isCvFunction).map(s => s.fnName)
       })
-    }).filter(m => !!m.cvClasses.length || !!m.cvFnNames.length)
+    })//.filter(m => !!m.cvClasses.length || !!m.cvFnNames.length)
 
     return cvModuleTrees
   }
@@ -74,11 +77,12 @@ exports.create = function (
   const {
     findAllFunctions,
     findFunctionsByModule,
+    findAllClasses,
     findClassesByModule
   } = docsFinderService
 
   const allModules = ['core', 'imgproc', 'calib3d']
-  const getApiTree = makeGetApiTree(allModules, findAllFunctions)
+  const getApiTree = makeGetApiTree(allModules, findAllFunctions, findAllClasses)
   const getCvModuleDocs = makeGetCvModuleDocs(findFunctionsByModule, findClassesByModule)
 
   async function renderDocsPage(req, res) : any {

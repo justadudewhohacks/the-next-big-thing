@@ -131,6 +131,10 @@ export default class extends React.Component<Props, State> {
   }
 
   getFilteredApiTree() : Array<CvModuleTreeT> {
+    if (!this.state.searchValue) {
+      return this.props.apiTree
+    }
+
     const filterByFnNameIncludes = fnName =>
       fnName.toLowerCase().includes(this.state.searchValue.toLowerCase())
 

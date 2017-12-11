@@ -8,12 +8,17 @@ import type { CvClassWithFnsT } from '@/types/CvClassWithFns'
 import type { CvFnT } from '@/types/CvFn'
 import type { CvFnSignatureT } from '@/types/CvFnSignature'
 import type { CvFnBodyT } from '@/types/CvFnBody'
-import type { TypeAndNameT } from '@/types/TypeAndName'
 import type { ConstructorT } from '@/types/Constructor'
+import type { DeclarationT } from '@/types/Declaration'
 
 import Anchor from './Anchor'
 
 const FnHeading = styled.h4`
+`
+
+const HLine = styled.div`
+  padding: 20px 5px;
+  border-bottom: 1px solid #c6c6c6;
 `
 
 const Code = styled.div`
@@ -104,23 +109,31 @@ const renderType = ({ type, arrayDepth, numArrayElements }) =>
     )
   )
 
-const renderJSONFieldWithType = (decl, idx, allTypes) => (
+const renderJSONFieldWithType = decl => (
   <span>
     <ParamName> { decl.name } </ParamName>
     <span> { ': ' } </span>
     { renderType(decl) }
-    {
-      idx < allTypes.length - 1
-        ? <span> { ', ' } </span>
-        : null
-    }
   </span>
 )
 
-const renderJSONObject = fields => (
+const appendSeperatingComma = (idx: number, arr: Array<any>) => (
+  idx < arr.length - 1
+    ? <span> { ', ' } </span>
+    : null
+)
+
+const renderInlineJSONObject = fields => (
   <span>
     { '{' }
-    { fields.map(renderJSONFieldWithType) }
+    {
+      fields.map((decl, idx, allTypes) => (
+        <span>
+          { renderJSONFieldWithType(decl) }
+          { appendSeperatingComma(idx, allTypes) }
+        </span>
+      ))
+    }
     { '}' }
   </span>
 )
@@ -161,7 +174,6 @@ const renderCallback = (renderReturnValue: void => any) => (
     { 'callback'}
     { '(' }
     <Type> { 'Error' } </Type>
-    { ', ' }
     { renderReturnValue() }
     { ')' }
   </span>
@@ -220,7 +232,7 @@ const renderFunctionSignature = (signature: CvFnSignatureT, fnName: string, hasA
             <CodeLine marginBottom="5px">
               { renderResult() }
               { ' = ' }
-              { renderJSONObject(returnValues)}
+              { renderInlineJSONObject(returnValues)}
             </CodeLine>
             )
           : null
@@ -229,7 +241,12 @@ const renderFunctionSignature = (signature: CvFnSignatureT, fnName: string, hasA
         renderSyncFunctionSignature(
           signature,
           fnName,
-          () => <span> { renderReturnValueFunc() } { ' : ' } </span>
+          () => (
+            <span>
+              { renderReturnValueFunc() }
+              { hasReturnVal ? ' : ' : null }
+            </span>
+          )
         )
       }
       {
@@ -257,7 +274,12 @@ const renderFunctionSignature = (signature: CvFnSignatureT, fnName: string, hasA
           && renderCallbackedFunctionSignature(
               signature,
               `${fnName}Async`,
-              renderReturnValueFunc
+              () => (
+                <span>
+                  { hasReturnVal ? ', ' : null }
+                  { renderReturnValueFunc() }
+                </span>
+              )
             )
       }
     </Code>
@@ -272,10 +294,31 @@ const renderFunctions = (fns: Array<CvFnT>) =>
     </div>
   ))
 
-const renderAccessors = (fields: Array<TypeAndNameT>) => (
+const Indent = styled.span`
+  padding: 0 10px;
+`
+
+const renderAccessors = (fields: Array<DeclarationT>, className: string) => (
   <div>
     <h3> { 'accessors' } </h3>
-
+    <Code>
+      <CodeLine>
+        { renderTypeOrClassType(className) }
+        { ' {' }
+      </CodeLine>
+      {
+        fields.map((f, idx, arr) => (
+          <CodeLine>
+            <Indent />
+            { renderJSONFieldWithType(f) }
+            { appendSeperatingComma(idx, arr) }
+          </CodeLine>
+        ))
+      }
+      <CodeLine>
+        { '}' }
+      </CodeLine>
+    </Code>
   </div>
 )
 
@@ -305,13 +348,13 @@ const renderClassInfo = (cvClassWithFns: CvClassWithFnsT) => (
     <h2> { cvClassWithFns.className } </h2>
     {
       cvClassWithFns.fields.length
-        && renderAccessors(cvClassWithFns.fields)
+        && renderAccessors(cvClassWithFns.fields, cvClassWithFns.className)
     }
     {
       cvClassWithFns.constructors.length
         && renderConstructors(cvClassWithFns.constructors, cvClassWithFns.className)
     }
-    <h3> { 'functions' } </h3>
+    { cvClassWithFns.classFns.length ? <h3> { 'functions' } </h3> : null }
     { renderFunctions(cvClassWithFns.classFns) }
   </div>
 )
@@ -327,7 +370,16 @@ export default ({ cvModule, cvModuleDocs } : Props) => (
       { cvModule }
     </ModuleDocsHeader>
     <ModuleDocsBody>
-      { cvModuleDocs.cvClasses.map(renderClassInfo) }
+      {
+        cvModuleDocs.cvClasses
+          .map(renderClassInfo)
+          .map(el => (
+            <div>
+              { el }
+              <HLine />
+            </div>
+          ))
+      }
       <h2> { `${cvModule} functions` } </h2>
       { renderFunctions(cvModuleDocs.cvFns) }
     </ModuleDocsBody>
