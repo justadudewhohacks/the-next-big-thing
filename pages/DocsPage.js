@@ -33,19 +33,11 @@ type Query = {
   cvModule: string
 }
 
-const makeOnModuleRequested = (cvModule: string) =>
-  (requestedModule: string) => {
-    if (cvModule !== requestedModule) {
-      Router.push(`/docs/${requestedModule}`)
-    }
-  }
-
 export default ({ url: { query } } : { url: { query: Query } }) => {
   return (
     <PageContainer>
       <ApiTree
         apiTree={query.apiTree}
-        onModuleRequested={makeOnModuleRequested(query.cvModule)}
       />
       <Content>
         <ModuleDocs

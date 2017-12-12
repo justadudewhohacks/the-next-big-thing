@@ -6,8 +6,8 @@ import styled, { css } from 'styled-components'
 import type { CvModuleTreeT } from '@/types/CvModuleTree'
 import type { CvClassInfoT } from '@/types/CvClassInfo'
 
-import CollapsibleList from './CollapsibleList'
-import SearchField from './SearchField'
+import CollapsibleList from '@/pages/components/CollapsibleList'
+import SearchField from '@/pages/components/SearchField'
 
 const listCss = css`
   list-style: none;
@@ -70,37 +70,31 @@ const ApiTree = styled.div`
   flex-direction: column;
 `
 
-const renderFunctionItem = (fn: string, onLinkClicked: string => void) => (
+const renderFunctionItem = (cvModule: string, fn: string) => (
   <FunctionItem key={fn}>
-    <a
-      href={`#${fn}`}
-      onClick={onLinkClicked}
-    >
+    <a href={`/docs/${cvModule}#${fn}`}>
       { fn }
     </a>
   </FunctionItem>
 )
 
-const renderClassHeader = (cvModule: string, onLinkClicked: string => void) => (
-  <a
-    href={`#${cvModule}`}
-    onClick={onLinkClicked}
-  >
-    { cvModule }
+const renderClassHeader = (cvModule: string, className: string) => (
+  <a href={`/docs/${cvModule}#${className}`}>
+    { className }
   </a>
 )
 
-const renderClassList = (clazzes : Array<CvClassInfoT>, onLinkClicked: string => void) => (
+const renderClassList = (cvModule: string, clazzes : Array<CvClassInfoT>) => (
   <ClassList>
     {
       clazzes.map(clazz => (
         <CollapsibleList
           key={clazz.className}
-          renderHeaderText={() => renderClassHeader(clazz.className, onLinkClicked)}
+          renderHeaderText={() => renderClassHeader(cvModule, clazz.className)}
           headerCss={classListHeaderCss}
           itemsCss={classListItemsCss}
         >
-          { clazz.classFnNames.map(fnName => renderFunctionItem(fnName, onLinkClicked)) }
+          { clazz.classFnNames.map(fnName => renderFunctionItem(cvModule, fnName)) }
         </CollapsibleList>
       ))
     }
@@ -108,8 +102,7 @@ const renderClassList = (clazzes : Array<CvClassInfoT>, onLinkClicked: string =>
 )
 
 type Props = {
-  apiTree: Array<CvModuleTreeT>,
-  onModuleRequested: string => void
+  apiTree: Array<CvModuleTreeT>
 }
 
 type State = {
@@ -159,7 +152,6 @@ export default class extends React.Component<Props, State> {
   }
 
   render() : any {
-    const { onModuleRequested } = this.props
     const apiTree = this.getFilteredApiTree()
     return (
       <ApiTree>
@@ -177,8 +169,8 @@ export default class extends React.Component<Props, State> {
                 onClickHeaderText={() => onModuleRequested(cvModule.cvModule)}
                 itemsCss={moduleListItemsCss}
               >
-                { renderClassList(cvModule.cvClasses, () => onModuleRequested(cvModule.cvModule)) }
-                { cvModule.cvFnNames.map(fnName => renderFunctionItem(fnName, () => onModuleRequested(cvModule.cvModule))) }
+                { renderClassList(cvModule.cvModule, cvModule.cvClasses) }
+                { cvModule.cvFnNames.map(fnName => renderFunctionItem(cvModule.cvModule, fnName)) }
               </CollapsibleList>
             ))
           }

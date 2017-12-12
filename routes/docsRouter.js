@@ -12,12 +12,6 @@ const {
 const isClassFunction = s => s.owner !== 'cv'
 const isCvFunction = s => !isClassFunction(s)
 
-function extractClasses(fns: Array<CvFnT>) : Array<string> {
-  return Array.from(new Set(
-    fns.filter(isClassFunction).map(s => s.owner)
-  ))
-}
-
 function makeGetApiTree(
   allModules: Array<string>,
   findAllFunctions: void => Promise<Array<CvFnT>>,
@@ -41,7 +35,7 @@ function makeGetApiTree(
         cvClasses,
         cvFnNames: functions.filter(isCvFunction).map(s => s.fnName)
       })
-    })//.filter(m => !!m.cvClasses.length || !!m.cvFnNames.length)
+    })
 
     return cvModuleTrees
   }
@@ -81,7 +75,7 @@ exports.create = function (
     findClassesByModule
   } = docsFinderService
 
-  const allModules = ['core', 'imgproc', 'calib3d']
+  const allModules = ['core', 'imgproc', 'calib3d', 'face', 'dnn', 'features2d']
   const getApiTree = makeGetApiTree(allModules, findAllFunctions, findAllClasses)
   const getCvModuleDocs = makeGetCvModuleDocs(findFunctionsByModule, findClassesByModule)
 
@@ -89,8 +83,7 @@ exports.create = function (
     try {
       const { cvModule } = req.params
       if (!allModules.some(m => m === cvModule)) {
-        app.render(req, res, '/Error404Page')
-        return
+        return app.render(req, res, '/Error404Page')
       }
 
       const data = {
@@ -98,10 +91,10 @@ exports.create = function (
         cvModuleDocs: await getCvModuleDocs(cvModule),
         cvModule
       }
-      app.render(req, res, '/DocsPage', data)
+      return app.render(req, res, '/DocsPage', data)
     } catch (err) {
       console.error(err)
-      res.status(505).send()
+      return res.status(505).send()
     }
   }
 

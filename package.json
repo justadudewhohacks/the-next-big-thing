@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon -w server.js -r babel-core/register server.js",
+    "dev2": "node -r babel-core/register server.js",
     "build": "next build",
     "start": "NODE_ENV=production node server.js",
     "test": "mocha ./tests --R"

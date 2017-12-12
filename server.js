@@ -18,7 +18,10 @@ app.prepare()
   .then(() => {
     const server = express()
     server.use(express.static(publicDir));
-
+    server.use('*', (req, res, next) => {
+      console.log('requesting page:', req.originalUrl)
+      next()
+    })
     server.use('/docs', docsRouter({ Router: express.Router, app }))
 
     server.get('/', (req, res) => res.redirect('/docs'))
