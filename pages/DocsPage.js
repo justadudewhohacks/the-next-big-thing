@@ -56,6 +56,10 @@ const MenuIcon = styled.i`
   padding: 4px;
   margin-right: 4px;
   cursor: pointer;
+  display: none;
+  @media (max-width: 780px) {
+    display: inherit;
+  }
 `
 
 const ContentHeader = styled.div`
@@ -73,9 +77,13 @@ const Menu = styled.div`
   min-width: 260px;
   max-width: 260px;
   overflow-x: hidden;
-  @media (max-width: 620px) {
-    min-width: 100%;
-    max-width: 100%;
+  background: #fafafa;
+  z-index: 1;
+  transition: transform 100ms ease-out;
+  transform: translate(${props => props.translateX}px);
+  @media (max-width: 780px) {
+    position: absolute;
+    left: 0;
   }
 `
 
@@ -90,19 +98,49 @@ type Props = {
 }
 
 type State = {
-  isMenuVisible: boolean
+  isMenuVisible: boolean,
+  isMobileView: boolean
 }
+
+const maxMobileWidth = 780
 
 export default class extends React.Component<Props, State> {
   toggleMenu: Function
 
+
   constructor(props: Props) {
     super(props)
     this.toggleMenu = this.toggleMenu.bind(this)
+    this.onWindowResized = this.onWindowResized.bind(this)
   }
 
   state = {
-    isMenuVisible: true
+    isMenuVisible: true,
+    isMobileView: false
+  }
+
+  componentDidMount() {
+    this.onWindowResized();
+    window.addEventListener('resize', this.onWindowResized);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onWindowResized);
+  }
+
+  onWindowResized() {
+    if (!this.state.isMobileView && window.innerWidth < maxMobileWidth) {
+      this.setState({
+        isMobileView: true,
+        isMenuVisible: false
+      })
+    }
+
+    if (this.state.isMobileView && maxMobileWidth <= window.innerWidth) {
+      this.setState({
+        isMobileView: false
+      })
+    }
   }
 
   toggleMenu() {
@@ -112,6 +150,7 @@ export default class extends React.Component<Props, State> {
   }
 
   render() : any {
+    console.log('render')
     const { query } = this.props.url
     return (
       <PageWrapper>
@@ -125,17 +164,11 @@ export default class extends React.Component<Props, State> {
             </MenuIcon>
           </Navbar>
           <MainContainer>
-            {
-              this.state.isMenuVisible
-              ? (
-                <Menu>
-                  <ApiTree
-                    apiTree={query.apiTree}
-                  />
-                </Menu>
-              )
-              : null
-            }
+            <Menu translateX={this.state.isMenuVisible || !this.state.isMobileView ? 0 : -260}>
+              <ApiTree
+                apiTree={query.apiTree}
+              />
+            </Menu>
             <Content>
               <div>
                 <ContentHeader>
