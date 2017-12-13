@@ -12,7 +12,7 @@ import SearchField from '@/pages/components/SearchField'
 const listCss = css`
   list-style: none;
   margin: 0;
-  padding: 0 8px;
+  padding: 0 0px;
 `
 
 const listItemCss = css`
@@ -27,12 +27,12 @@ const listItemCss = css`
 
 const classListItemsCss = css`
   ${listCss}
+  padding: 0 8px;
 `
 
 const classListHeaderCss = css`
   ${listItemCss}
   font-size: 18px;
-  padding: 4px;
 `
 
 const moduleListItemsCss = css`
@@ -40,10 +40,14 @@ const moduleListItemsCss = css`
 `
 const moduleListHeaderCss = css`
   ${listItemCss}
-  font-size: 18px;
   padding: 4px;
+  font-size: 18px;
   background: #424242;
   color: #fafafa;
+`
+
+const ClassHeader = styled.a`
+  flex: 1;
 `
 
 const FunctionItem = styled.li`
@@ -79,9 +83,9 @@ const renderFunctionItem = (cvModule: string, fn: string) => (
 )
 
 const renderClassHeader = (cvModule: string, className: string) => (
-  <a href={`/docs/${cvModule}#${className}`}>
+  <ClassHeader href={`/docs/${cvModule}#${className}`}>
     { className }
-  </a>
+  </ClassHeader>
 )
 
 const renderClassList = (cvModule: string, clazzes : Array<CvClassInfoT>) => (
@@ -93,6 +97,7 @@ const renderClassList = (cvModule: string, clazzes : Array<CvClassInfoT>) => (
           renderHeaderText={() => renderClassHeader(cvModule, clazz.className)}
           headerCss={classListHeaderCss}
           itemsCss={classListItemsCss}
+          isCollapsible={clazz.classFnNames.length > 5}
         >
           { clazz.classFnNames.map(fnName => renderFunctionItem(cvModule, fnName)) }
         </CollapsibleList>
@@ -166,7 +171,6 @@ export default class extends React.Component<Props, State> {
                 key={cvModule.cvModule}
                 renderHeaderText={() => cvModule.cvModule}
                 headerCss={moduleListHeaderCss}
-                onClickHeaderText={() => onModuleRequested(cvModule.cvModule)}
                 itemsCss={moduleListItemsCss}
               >
                 { renderClassList(cvModule.cvModule, cvModule.cvClasses) }

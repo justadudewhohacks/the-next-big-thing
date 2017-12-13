@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 const ToggleIcon = styled.i`
-  margin-right: 5px;
+  padding: 4px;
 `
 
 const ListItems = styled.ul`
@@ -10,7 +10,9 @@ const ListItems = styled.ul`
 `
 
 const HeaderText = styled.span`
-  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  flex: 1;
 `
 
 const ListHeader = styled.div`
@@ -21,7 +23,8 @@ const ListHeader = styled.div`
 
 type Props = {
   header: string,
-  renderHeaderText: void => any
+  renderHeaderText: void => any,
+  isCollapsible?: boolean
 }
 
 type State = {
@@ -30,6 +33,10 @@ type State = {
 
 export default class extends React.Component<Props, State> {
   toggle: Function
+
+  static defaultProps = {
+    isCollapsible: true
+  }
 
   constructor(props: Props) {
     super(props)
@@ -51,17 +58,23 @@ export default class extends React.Component<Props, State> {
         <ListHeader
           css={this.props.headerCss}
         >
-          <ToggleIcon
-            onClick={this.toggle}
-            className="material-icons"
-          >
-            {this.state.collapsed ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}
-          </ToggleIcon>
           <HeaderText
             onClick={this.props.onClickHeaderText}
           >
             { renderHeaderText() }
           </HeaderText>
+          {
+            this.props.isCollapsible
+            ? (
+              <ToggleIcon
+                onClick={this.toggle}
+                className="material-icons"
+              >
+                {this.state.collapsed ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}
+              </ToggleIcon>
+            )
+            : null
+          }
         </ListHeader>
         {
           this.state.collapsed ? null :
