@@ -39,15 +39,7 @@ const CodeLine = styled.div`
 const ModuleDocs = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
   box-sizing: border-box;
-  margin: 0;
-`
-
-const ModuleDocsHeader = styled.h3`
-  padding: 4px;
-  background: #424242;
-  color: #ffffff;
   margin: 0;
 `
 
@@ -373,9 +365,6 @@ type Props = {
 
 export default ({ cvModule, cvModuleDocs } : Props) => (
   <ModuleDocs>
-    <ModuleDocsHeader>
-      { cvModule }
-    </ModuleDocsHeader>
     <ModuleDocsBody>
       {
         cvModuleDocs.cvClasses

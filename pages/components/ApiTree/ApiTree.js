@@ -69,9 +69,7 @@ const ModuleList = styled.ul`
 `
 
 const ApiTree = styled.div`
-  min-width: 260px;
-  max-width: 260px;
-  overflow: hidden;
+  height: 100%;
   display: flex;
   flex-direction: column;
 `
