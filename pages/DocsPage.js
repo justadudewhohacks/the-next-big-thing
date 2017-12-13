@@ -150,7 +150,6 @@ export default class extends React.Component<Props, State> {
   }
 
   render() : any {
-    console.log('render')
     const { query } = this.props.url
     return (
       <PageWrapper>
