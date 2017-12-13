@@ -33,6 +33,7 @@ const classListItemsCss = css`
 const classListHeaderCss = css`
   ${listItemCss}
   font-size: 18px;
+  font-weight: bold;
 `
 
 const moduleListItemsCss = css`
@@ -68,8 +69,9 @@ const ModuleList = styled.ul`
 `
 
 const ApiTree = styled.div`
-  width: 260px;
   min-width: 260px;
+  max-width: 260px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 `

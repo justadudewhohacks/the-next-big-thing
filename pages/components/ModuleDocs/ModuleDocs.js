@@ -45,7 +45,7 @@ const ModuleDocs = styled.div`
 `
 
 const ModuleDocsHeader = styled.h3`
-  padding: 0 10px;
+  padding: 4px;
   background: #424242;
   color: #ffffff;
   margin: 0;
@@ -59,6 +59,7 @@ const ModuleDocsBody = styled.div`
 `
 
 const ParamName = styled.span`
+
 `
 
 const FnName = styled.span`
