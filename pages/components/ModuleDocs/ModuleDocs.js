@@ -86,6 +86,10 @@ const Result = styled.span`
   color: #d29f04;
 `
 
+const Indent = styled.span`
+  padding: 0 4px;
+`
+
 const renderArrayOrComponent = (arrayDepth, component) => (
   arrayDepth
     ? <span> [ { renderArrayOrComponent(arrayDepth - 1, component) } ] </span>
@@ -294,10 +298,6 @@ const renderFunctions = (fns: Array<CvFnT>) =>
     </div>
   ))
 
-const Indent = styled.span`
-  padding: 0 10px;
-`
-
 const renderAccessors = (fields: Array<DeclarationT>, className: string) => (
   <div>
     <h3> { 'accessors' } </h3>
@@ -348,13 +348,19 @@ const renderClassInfo = (cvClassWithFns: CvClassWithFnsT) => (
     <h2> { cvClassWithFns.className } </h2>
     {
       cvClassWithFns.fields.length
-        && renderAccessors(cvClassWithFns.fields, cvClassWithFns.className)
+        ? renderAccessors(cvClassWithFns.fields, cvClassWithFns.className)
+        : null
     }
     {
       cvClassWithFns.constructors.length
-        && renderConstructors(cvClassWithFns.constructors, cvClassWithFns.className)
+        ? renderConstructors(cvClassWithFns.constructors, cvClassWithFns.className)
+        : null
     }
-    { cvClassWithFns.classFns.length ? <h3> { 'functions' } </h3> : null }
+    {
+      cvClassWithFns.classFns.length
+        ? <h3> { 'functions' } </h3>
+        : null
+    }
     { renderFunctions(cvClassWithFns.classFns) }
   </div>
 )
