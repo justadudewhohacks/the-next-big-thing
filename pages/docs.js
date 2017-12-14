@@ -6,8 +6,8 @@ import styled from 'styled-components'
 import type { CvModuleTreeT } from '@/types/CvModuleTree'
 import type { CvModuleT } from '@/types/CvModule'
 
-import ApiTree from './components/ApiTree'
-import ModuleDocs from './components/ModuleDocs'
+import ApiTree from '@/components/ApiTree'
+import ModuleDocs from '@/components/ModuleDocs'
 
 const PageWrapper = styled.div`
   font-family: 'Open Sans', sans-serif;
@@ -88,13 +88,9 @@ const Menu = styled.div`
 `
 
 type Props = {
-  url: {
-    query: {
-      apiTree: Array<CvModuleTreeT>,
-      cvModuleDocs: CvModuleT,
-      cvModule: string
-    }
-  }
+  apiTree: Array<CvModuleTreeT>,
+  cvModuleDocs: CvModuleT,
+  cvModule: string
 }
 
 type State = {
@@ -106,7 +102,17 @@ const maxMobileWidth = 780
 
 export default class extends React.Component<Props, State> {
   toggleMenu: Function
+  onWindowResized: Function
 
+  static getInitialProps({ req, query } : any) : Props {
+    const isServer = !!req
+    if (isServer) {
+      // TODO
+      return query
+    }
+    // TODO
+    return undefined
+  }
 
   constructor(props: Props) {
     super(props)
@@ -150,7 +156,7 @@ export default class extends React.Component<Props, State> {
   }
 
   render() : any {
-    const { query } = this.props.url
+    const { apiTree, cvModuleDocs, cvModule } = this.props
     return (
       <PageWrapper>
         <PageContainer>
@@ -165,18 +171,18 @@ export default class extends React.Component<Props, State> {
           <MainContainer>
             <Menu translateX={this.state.isMenuVisible || !this.state.isMobileView ? 0 : -260}>
               <ApiTree
-                apiTree={query.apiTree}
+                apiTree={apiTree}
               />
             </Menu>
             <Content>
               <div>
                 <ContentHeader>
-                  <span> { query.cvModule } </span>
+                  <span> { cvModule } </span>
                 </ContentHeader>
               </div>
               <ModuleDocs
-                cvModuleDocs={query.cvModuleDocs}
-                cvModule={query.cvModule}
+                cvModuleDocs={cvModuleDocs}
+                cvModule={cvModule}
               />
             </Content>
           </MainContainer>

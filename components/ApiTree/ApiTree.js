@@ -6,8 +6,8 @@ import styled, { css } from 'styled-components'
 import type { CvModuleTreeT } from '@/types/CvModuleTree'
 import type { CvClassInfoT } from '@/types/CvClassInfo'
 
-import CollapsibleList from '@/pages/components/CollapsibleList'
-import SearchField from '@/pages/components/SearchField'
+import CollapsibleList from '../CollapsibleList'
+import SearchField from '../SearchField'
 
 const listCss = css`
   list-style: none;
@@ -126,6 +126,11 @@ export default class extends React.Component<Props, State> {
 
   state = {
     searchValue: ''
+  }
+
+  shouldComponentUpdate(props: Props) : boolean {
+    // TODO
+    return props !== this.props
   }
 
   getFilteredApiTree() : Array<CvModuleTreeT> {

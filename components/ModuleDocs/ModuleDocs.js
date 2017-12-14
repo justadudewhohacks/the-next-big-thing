@@ -11,7 +11,7 @@ import type { CvFnBodyT } from '@/types/CvFnBody'
 import type { ConstructorT } from '@/types/Constructor'
 import type { DeclarationT } from '@/types/Declaration'
 
-import Anchor from '@/pages/components/Anchor'
+import Anchor from '../Anchor'
 
 const FnHeading = styled.h4`
 `

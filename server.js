@@ -1,11 +1,9 @@
 const express = require('express')
 const nextjs = require('next')
 const path = require('path')
+
 const {
-  docsRouter
-} = require('./routes')
-const {
-  connect
+  docsService
 } = require('./services')
 
 const port = parseInt(process.env.PORT, 10) || 3000
@@ -14,7 +12,7 @@ const handle = app.getRequestHandler()
 const publicDir = path.join(__dirname, '/public')
 
 app.prepare()
-  .then(() => connect('justaclient', 'opencv4nodejs'))
+  .then(() => docsService.connect())
   .then(() => {
     const server = express()
     server.use(express.static(publicDir));
@@ -22,11 +20,41 @@ app.prepare()
       console.log('requesting page:', req.originalUrl)
       next()
     })
-    server.use('/docs', docsRouter({ Router: express.Router, app }))
 
-    server.get('/', (req, res) => res.redirect('/docs'))
+    async function renderDocsPage(req, res) : any {
+      try {
+        const { cvModule } = req.params
+        if (!docsService.hasCvModule(cvModule)) {
+          return app.render(req, res, '/error404')
+        }
 
-    server.get('*', (req, res) => handle(req, res))
+        const data = {
+          apiTree: await docsService.getApiTree(),
+          cvModuleDocs: await docsService.getCvModuleDocs(cvModule),
+          cvModule
+        }
+        return app.render(req, res, '/docs', data)
+      } catch (err) {
+        console.error(err)
+        return res.status(505).send()
+      }
+    }
+
+    server.get('/docs', (req, res) => {
+      console.log('requesting: /docs (redirect)')
+      res.redirect('/docs/core')
+    })
+    server.get('/docs/:cvModule', renderDocsPage)
+
+    server.get('/', (req, res) => {
+      console.log('requesting: /', req.originalUrl)
+      res.redirect('/docs')
+    })
+
+    server.get('*', (req, res) => {
+      console.log('requesting: *', req.originalUrl)
+      handle(req, res)
+    })
 
     server.listen(port, (err) => {
       if (err) throw err

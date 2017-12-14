@@ -5,14 +5,16 @@ import type { CvModuleT } from '@/types/CvModule'
 import type { CvClassT } from '@/types/CvClass'
 import type { CvFnT } from '@/types/CvFn'
 
-const {
-  docsFinderService
-} = require('../services')
-
 const isClassFunction = s => s.owner !== 'cv'
 const isCvFunction = s => !isClassFunction(s)
 
-function makeGetApiTree(
+exports.makeHasCvModule = function (allModules: Array<string>) : string => boolean {
+  return function (cvModule: string) : boolean {
+    return allModules.some(m => m === cvModule)
+  }
+}
+
+exports.makeGetApiTree = function makeGetApiTree(
   allModules: Array<string>,
   findAllFunctions: void => Promise<Array<CvFnT>>,
   findAllClasses: void => Promise<Array<CvClassT>>
@@ -41,7 +43,7 @@ function makeGetApiTree(
   }
 }
 
-function makeGetCvModuleDocs(
+exports.makeGetCvModuleDocs = function (
   findFunctionsByModule: string => Promise<Array<CvFnT>>,
   findClassesByModule: string => Promise<Array<CvClassT>>
 ) : string => Promise<CvModuleT> {
@@ -63,44 +65,3 @@ function makeGetCvModuleDocs(
   }
 }
 
-exports.makeGetApiTree = makeGetApiTree
-
-exports.create = function (
-  { Router, app }: { Router: any, app: any, publicDir: string }
-) : any {
-  const {
-    findAllFunctions,
-    findFunctionsByModule,
-    findAllClasses,
-    findClassesByModule
-  } = docsFinderService
-
-  const allModules = ['core', 'imgproc', 'calib3d', 'face', 'dnn', 'features2d']
-  const getApiTree = makeGetApiTree(allModules, findAllFunctions, findAllClasses)
-  const getCvModuleDocs = makeGetCvModuleDocs(findFunctionsByModule, findClassesByModule)
-
-  async function renderDocsPage(req, res) : any {
-    try {
-      const { cvModule } = req.params
-      if (!allModules.some(m => m === cvModule)) {
-        return app.render(req, res, '/Error404Page')
-      }
-
-      const data = {
-        apiTree: await getApiTree(),
-        cvModuleDocs: await getCvModuleDocs(cvModule),
-        cvModule
-      }
-      return app.render(req, res, '/DocsPage', data)
-    } catch (err) {
-      console.error(err)
-      return res.status(505).send()
-    }
-  }
-
-  const router = Router();
-  router.get('/', (req, res) => res.redirect('/docs/core'))
-  router.get('/:cvModule', renderDocsPage)
-
-  return router
-}
