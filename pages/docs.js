@@ -2,12 +2,18 @@
 
 import React from 'react'
 import styled from 'styled-components'
+import withRedux from 'next-redux-wrapper'
+import { bindActionCreators } from 'redux'
+import { Map } from 'immutable'
 
 import type { CvModuleTreeT } from '@/types/CvModuleTree'
 import type { CvModuleT } from '@/types/CvModule'
 
 import ApiTree from '@/components/ApiTree'
 import ModuleDocs from '@/components/ModuleDocs'
+
+import initStore from '@/redux/store'
+import { updateApiTree, cacheCvModule } from '@/redux/actions'
 
 const PageWrapper = styled.div`
   font-family: 'Open Sans', sans-serif;
@@ -89,8 +95,9 @@ const Menu = styled.div`
 
 type Props = {
   apiTree: Array<CvModuleTreeT>,
-  cvModuleDocs: CvModuleT,
-  cvModule: string
+  displayedCvModule: string,
+  displayedCvModuleDocs: CvModuleT,
+  isCvModuleCached: string => boolean
 }
 
 type State = {
@@ -98,20 +105,49 @@ type State = {
   isMobileView: boolean
 }
 
+const reduxify = withRedux(
+  initStore,
+  (state) => {
+    const { docs } = state
+    const { apiTree, displayedCvModule } = docs
+    const cvModules = Map(docs.cvModules)
+
+    return ({
+      apiTree,
+      displayedCvModule,
+      displayedCvModuleDocs: cvModules.get(displayedCvModule)
+    })
+  },
+  dispatch => ({
+    updateApiTree: bindActionCreators(updateApiTree, dispatch),
+    cacheCvModule: bindActionCreators(cacheCvModule, dispatch)
+  })
+)
+
 const maxMobileWidth = 780
 
-export default class extends React.Component<Props, State> {
+export default reduxify(class extends React.Component<Props, State> {
   toggleMenu: Function
   onWindowResized: Function
 
-  static getInitialProps({ req, query } : any) : Props {
+  static getInitialProps({ req, query, store } : any) : Props {
     const isServer = !!req
+    const { cvModule } = query
     if (isServer) {
-      // TODO
-      return query
+      const { apiTree, cvModuleDocs } = query
+      store.dispatch(updateApiTree(apiTree))
+      store.dispatch(cacheCvModule({ cvModule, cvModuleDocs }))
+      return { apiTree, displayedCvModule: cvModule, cvModuleDocs }
     }
+
     // TODO
-    return undefined
+    const isCvModuleCached = Map(store.getState().docs.cvModules).keySeq().some(m => m === cvModule)
+    if (isCvModuleCached) {
+      console.log('cvModule found in cache:', cvModule)
+    } else {
+      console.log('cvModule not found in cache:', cvModule)
+    }
+    return {}
   }
 
   constructor(props: Props) {
@@ -156,7 +192,9 @@ export default class extends React.Component<Props, State> {
   }
 
   render() : any {
-    const { apiTree, cvModuleDocs, cvModule } = this.props
+    const { apiTree, displayedCvModuleDocs, displayedCvModule } = this.props
+    console.log('render')
+
     return (
       <PageWrapper>
         <PageContainer>
@@ -177,12 +215,12 @@ export default class extends React.Component<Props, State> {
             <Content>
               <div>
                 <ContentHeader>
-                  <span> { cvModule } </span>
+                  <span> { displayedCvModule } </span>
                 </ContentHeader>
               </div>
               <ModuleDocs
-                cvModuleDocs={cvModuleDocs}
-                cvModule={cvModule}
+                cvModuleDocs={displayedCvModuleDocs}
+                cvModule={displayedCvModule}
               />
             </Content>
           </MainContainer>
@@ -190,5 +228,4 @@ export default class extends React.Component<Props, State> {
       </PageWrapper>
     )
   }
-}
-
+})

@@ -1,6 +1,7 @@
 /* @flow */
 
 import React from 'react'
+import Link from 'next/link'
 import styled, { css } from 'styled-components'
 
 import type { CvModuleTreeT } from '@/types/CvModuleTree'
@@ -83,8 +84,13 @@ const renderFunctionItem = (cvModule: string, fn: string) => (
 )
 
 const renderClassHeader = (cvModule: string, className: string) => (
-  <ClassHeader href={`/docs/${cvModule}#${className}`}>
-    { className }
+  <ClassHeader >
+    <Link
+      href={`/docs?cvModule=${cvModule}`}
+      as={`/docs/${cvModule}#${className}`}
+    >
+      { className }
+    </Link>
   </ClassHeader>
 )
 
@@ -129,7 +135,9 @@ export default class extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(props: Props) : boolean {
-    // TODO
+    const isSame = props !== this.props
+    console.log('shouldComponentUpdate')
+    console.log(isSame)
     return props !== this.props
   }
 
