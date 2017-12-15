@@ -1,13 +1,13 @@
 /* @flow */
 
 import React from 'react'
-import Link from 'next/link'
 import styled, { css } from 'styled-components'
 
 import type { CvModuleTreeT } from 'types/CvModuleTree'
 import type { CvClassInfoT } from 'types/CvClassInfo'
 
 import CollapsibleList from '../CollapsibleList'
+import HashableLink from '../HashableLink'
 
 const listCss = css`
   list-style: none;
@@ -47,7 +47,7 @@ const moduleListHeaderCss = css`
   color: #fafafa;
 `
 
-const ClassHeader = styled.a`
+const ClassHeader = styled.div`
   flex: 1;
 `
 
@@ -70,25 +70,23 @@ const ApiTree = styled.ul`
 
 const renderFunctionItem = (cvModule: string, fn: string) => (
   <FunctionItem key={fn}>
-    <Link
-      prefetch
+    <HashableLink
       href={`/docs?cvModule=${cvModule}`}
       as={`/docs/${cvModule}#${fn}`}
     >
       { fn }
-    </Link>
+    </HashableLink>
   </FunctionItem>
 )
 
 const renderClassHeader = (cvModule: string, className: string) => (
   <ClassHeader >
-    <Link
-      prefetch
+    <HashableLink
       href={`/docs?cvModule=${cvModule}`}
       as={`/docs/${cvModule}#${className}`}
     >
       { className }
-    </Link>
+    </HashableLink>
   </ClassHeader>
 )
 

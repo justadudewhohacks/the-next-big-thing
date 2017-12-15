@@ -5,6 +5,8 @@ import styled from 'styled-components'
 import withRedux from 'next-redux-wrapper'
 import { bindActionCreators } from 'redux'
 
+import Router from 'next/router'
+
 import type { CvModuleTreeT } from 'types/CvModuleTree'
 import type { CvModuleT } from 'types/CvModule'
 
@@ -148,7 +150,7 @@ export default reduxify(class extends React.Component<Props, State> {
       return { filteredApiTree: apiTree, displayedCvModule: cvModule, cvModuleDocs }
     }
 
-    // TODO
+    console.log('getInitialProps')
     const isCvModuleCached = Object.keys(store.getState().docs.cvModules).some(m => m === cvModule)
     if (isCvModuleCached) {
       console.log('cvModule found in cache:', cvModule)
@@ -181,7 +183,9 @@ export default reduxify(class extends React.Component<Props, State> {
     console.log('componentDidUpdate')
   }
 
-  componentDidMount() {console.log('componentDidMount')
+  componentDidMount() {
+    window.router = Router
+    console.log('componentDidMount')
     this.onWindowResized();
     window.addEventListener('resize', this.onWindowResized);
   }
