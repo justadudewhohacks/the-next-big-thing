@@ -22,8 +22,8 @@ const getFilteredApiTree = function (
     return apiTree
   }
 
-  const filterByFnNameIncludes = fnName =>
-    fnName.toLowerCase().includes(apiTreeFilter.toLowerCase())
+  const nameIncludes = name =>
+    name.toLowerCase().includes(apiTreeFilter.toLowerCase())
   const isNotEmpty = arr => !!arr.length
 
   return apiTree.map(
@@ -32,10 +32,10 @@ const getFilteredApiTree = function (
       cvClasses: moduleTree.cvClasses
         .map(cvClass => ({
           ...cvClass,
-          classFnNames: cvClass.classFnNames.filter(filterByFnNameIncludes)
+          classFnNames: cvClass.classFnNames.filter(nameIncludes)
         }))
-        .filter(cvClass => isNotEmpty(cvClass.classFnNames)),
-      cvFnNames: moduleTree.cvFnNames.filter(filterByFnNameIncludes)
+        .filter(cvClass => nameIncludes(cvClass.className) || isNotEmpty(cvClass.classFnNames)),
+      cvFnNames: moduleTree.cvFnNames.filter(nameIncludes)
     })
   )
 }
