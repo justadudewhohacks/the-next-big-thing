@@ -4,16 +4,15 @@ import React from 'react'
 import styled from 'styled-components'
 import withRedux from 'next-redux-wrapper'
 import { bindActionCreators } from 'redux'
-import { Map } from 'immutable'
 
-import type { CvModuleTreeT } from '@/types/CvModuleTree'
-import type { CvModuleT } from '@/types/CvModule'
+import type { CvModuleTreeT } from 'types/CvModuleTree'
+import type { CvModuleT } from 'types/CvModule'
 
-import ApiTree from '@/components/ApiTree'
-import ModuleDocs from '@/components/ModuleDocs'
+import ApiTree from 'components/ApiTree'
+import ModuleDocs from 'components/ModuleDocs'
 
-import initStore from '@/redux/store'
-import { updateApiTree, cacheCvModule } from '@/redux/actions'
+import initStore from 'store'
+import { updateApiTree, cacheCvModule, fetchCvModule, displayCvModule } from 'actions'
 
 const PageWrapper = styled.div`
   font-family: 'Open Sans', sans-serif;
@@ -109,13 +108,14 @@ const reduxify = withRedux(
   initStore,
   (state) => {
     const { docs } = state
-    const { apiTree, displayedCvModule } = docs
-    const cvModules = Map(docs.cvModules)
-
+    const { apiTree, cvModules, displayedCvModule } = docs
+    const displayedCvModuleDocs = cvModules[displayedCvModule]
+    console.log(cvModules)
+    console.log(displayedCvModuleDocs)
     return ({
       apiTree,
       displayedCvModule,
-      displayedCvModuleDocs: cvModules.get(displayedCvModule)
+      displayedCvModuleDocs
     })
   },
   dispatch => ({
@@ -141,11 +141,12 @@ export default reduxify(class extends React.Component<Props, State> {
     }
 
     // TODO
-    const isCvModuleCached = Map(store.getState().docs.cvModules).keySeq().some(m => m === cvModule)
+    const isCvModuleCached = Object.keys(store.getState().docs.cvModules).some(m => m === cvModule)
     if (isCvModuleCached) {
       console.log('cvModule found in cache:', cvModule)
+      store.dispatch(displayCvModule(cvModule))
     } else {
-      console.log('cvModule not found in cache:', cvModule)
+      store.dispatch(fetchCvModule(cvModule))
     }
     return {}
   }
@@ -161,7 +162,18 @@ export default reduxify(class extends React.Component<Props, State> {
     isMobileView: false
   }
 
-  componentDidMount() {
+  componentWillReceiveProps(nextProps) {
+    console.log(this.props)
+    console.log(nextProps)
+    console.log(this.props.apiTree === nextProps.apiTree)
+    console.log('componentWillReceiveProps')
+  }
+
+  componentDidUpdate() {
+    console.log('componentDidUpdate')
+  }
+
+  componentDidMount() {console.log('componentDidMount')
     this.onWindowResized();
     window.addEventListener('resize', this.onWindowResized);
   }

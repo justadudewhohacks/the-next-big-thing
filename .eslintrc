@@ -24,10 +24,6 @@
       ]
     }],
 
-    // babel-plugin-root-import
-    "import/no-unresolved": [ "error", { "ignore": [ "^@" ] } ],
-    "import/extensions": [ "error", { "ignore": [ "^@" ] } ],
-
     // flowtype
     "flowtype/require-return-type": [
       "error",
@@ -40,10 +36,16 @@
   "env": {
     "es6": true,
     "node": true,
-    "mocha": true
+    "mocha": true,
+    "browser": true
   },
   "parser": "babel-eslint",
   "plugins": [
     "flowtype"
-  ]
+  ],
+  "settings": {
+    "import/resolver": {
+      "babel-module": {}
+    }
+  }
 }

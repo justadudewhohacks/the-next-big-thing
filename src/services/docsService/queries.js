@@ -1,7 +1,7 @@
 /* @flow */
 
-import type { CvFnT } from '@/types/CvFn'
-import type { CvClassT } from '@/types/CvClass'
+import type { CvFnT } from 'types/CvFn'
+import type { CvClassT } from 'types/CvClass'
 
 const makeFindAllFunctions = function (FnSchema: any) : void => Promise<Array<CvFnT>> {
   return async function () : Promise<Array<CvFnT>> {

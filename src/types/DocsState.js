@@ -5,7 +5,7 @@ import type { CvModuleTreeT } from './CvModuleTree'
 
 export type DocsStateT = {
   apiTree: Array<CvModuleTreeT>,
-  cvModules: any, // TODO immutable Map
+  cvModules: any,
   displayedCvModule: string,
   displayedCvModuleDocs: CvModuleT
 }

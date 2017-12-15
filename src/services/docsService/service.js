@@ -1,9 +1,9 @@
 /* @flow */
 
-import type { CvModuleTreeT } from '@/types/CvModuleTree'
-import type { CvModuleT } from '@/types/CvModule'
-import type { CvClassT } from '@/types/CvClass'
-import type { CvFnT } from '@/types/CvFn'
+import type { CvModuleTreeT } from 'types/CvModuleTree'
+import type { CvModuleT } from 'types/CvModule'
+import type { CvClassT } from 'types/CvClass'
+import type { CvFnT } from 'types/CvFn'
 
 const isClassFunction = s => s.owner !== 'cv'
 const isCvFunction = s => !isClassFunction(s)

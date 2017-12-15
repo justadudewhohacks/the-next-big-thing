@@ -3,13 +3,13 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import type { CvModuleT } from '@/types/CvModule'
-import type { CvClassWithFnsT } from '@/types/CvClassWithFns'
-import type { CvFnT } from '@/types/CvFn'
-import type { CvFnSignatureT } from '@/types/CvFnSignature'
-import type { CvFnBodyT } from '@/types/CvFnBody'
-import type { ConstructorT } from '@/types/Constructor'
-import type { DeclarationT } from '@/types/Declaration'
+import type { CvModuleT } from 'types/CvModule'
+import type { CvClassWithFnsT } from 'types/CvClassWithFns'
+import type { CvFnT } from 'types/CvFn'
+import type { CvFnSignatureT } from 'types/CvFnSignature'
+import type { CvFnBodyT } from 'types/CvFnBody'
+import type { ConstructorT } from 'types/Constructor'
+import type { DeclarationT } from 'types/Declaration'
 
 import Anchor from '../Anchor'
 

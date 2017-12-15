@@ -1,13 +1,14 @@
 const express = require('express')
 const nextjs = require('next')
 const path = require('path')
+const bodyParser = require('body-parser')
 
-const {
-  docsService
-} = require('./services')
+const docsService = require('./services/docsService')
+
+const createApiRouter = require('./api')
 
 const port = parseInt(process.env.PORT, 10) || 3000
-const app = nextjs({ dev: process.env.NODE_ENV !== 'production' })
+const app = nextjs({ dir: './src', dev: process.env.NODE_ENV !== 'production' })
 const handle = app.getRequestHandler()
 const publicDir = path.join(__dirname, '/public')
 
@@ -15,11 +16,15 @@ app.prepare()
   .then(() => docsService.connect())
   .then(() => {
     const server = express()
-    server.use(express.static(publicDir));
+    server.use(express.static(publicDir))
+    server.use(bodyParser.json())
+
     server.use('*', (req, res, next) => {
       console.log('requesting page:', req.originalUrl)
       next()
     })
+
+    server.use('/api', createApiRouter({ Router: express.Router }))
 
     async function renderDocsPage(req, res) : any {
       try {

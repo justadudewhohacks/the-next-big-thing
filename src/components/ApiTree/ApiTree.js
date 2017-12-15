@@ -4,8 +4,8 @@ import React from 'react'
 import Link from 'next/link'
 import styled, { css } from 'styled-components'
 
-import type { CvModuleTreeT } from '@/types/CvModuleTree'
-import type { CvClassInfoT } from '@/types/CvClassInfo'
+import type { CvModuleTreeT } from 'types/CvModuleTree'
+import type { CvClassInfoT } from 'types/CvClassInfo'
 
 import CollapsibleList from '../CollapsibleList'
 import SearchField from '../SearchField'
@@ -77,15 +77,20 @@ const ApiTree = styled.div`
 
 const renderFunctionItem = (cvModule: string, fn: string) => (
   <FunctionItem key={fn}>
-    <a href={`/docs/${cvModule}#${fn}`}>
+    <Link
+      prefetch
+      href={`/docs?cvModule=${cvModule}`}
+      as={`/docs/${cvModule}#${fn}`}
+    >
       { fn }
-    </a>
+    </Link>
   </FunctionItem>
 )
 
 const renderClassHeader = (cvModule: string, className: string) => (
   <ClassHeader >
     <Link
+      prefetch
       href={`/docs?cvModule=${cvModule}`}
       as={`/docs/${cvModule}#${className}`}
     >
@@ -135,10 +140,9 @@ export default class extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(props: Props) : boolean {
-    const isSame = props !== this.props
-    console.log('shouldComponentUpdate')
-    console.log(isSame)
-    return props !== this.props
+    const hasChanged = props.apiTree !== this.props.apiTree
+    console.log('shouldComponentUpdate ApiTree?', hasChanged)
+    return hasChanged
   }
 
   getFilteredApiTree() : Array<CvModuleTreeT> {
@@ -169,7 +173,16 @@ export default class extends React.Component<Props, State> {
     this.setState({ searchValue })
   }
 
+  componentDidUpdate() {
+    console.log('componentDidUpdate ApiTree')
+  }
+
+  componentDidMount() {
+    console.log('componentDidMount ApiTree')
+  }
+
   render() : any {
+    console.log('render ApiTree')
     const apiTree = this.getFilteredApiTree()
     return (
       <ApiTree>

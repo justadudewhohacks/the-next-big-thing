@@ -1,9 +1,17 @@
 {
   "presets": ["next/babel", "es2015", "react", "stage-0"],
   "plugins": [
-    ["babel-plugin-root-import", {
-      "rootPathPrefix": "@"
-    }],
+    [
+      "module-resolver", {
+        "alias": {
+          "types": "./src/types",
+          "services": "./src/services",
+          "components": "./src/components",
+          "actions": "./src/redux/actions",
+          "store": "./src/redux/store"
+        }
+      }
+    ],
     "transform-flow-strip-types"
   ]
 }
