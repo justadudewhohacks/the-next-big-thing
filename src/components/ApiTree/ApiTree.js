@@ -68,40 +68,42 @@ const ApiTree = styled.ul`
   overflow-y: auto;
 `
 
-const renderFunctionItem = (cvModule: string, fn: string) => (
+const renderFunctionItem = (cvModule: string, fn: string, onLinkClicked: void => void) => (
   <FunctionItem key={fn}>
     <HashableLink
       href={`/docs?cvModule=${cvModule}`}
       as={`/docs/${cvModule}#${fn}`}
+      onClick={onLinkClicked}
     >
       { fn }
     </HashableLink>
   </FunctionItem>
 )
 
-const renderClassHeader = (cvModule: string, className: string) => (
+const renderClassHeader = (cvModule: string, className: string, onLinkClicked: void => void) => (
   <ClassHeader >
     <HashableLink
       href={`/docs?cvModule=${cvModule}`}
       as={`/docs/${cvModule}#${className}`}
+      onClick={onLinkClicked}
     >
       { className }
     </HashableLink>
   </ClassHeader>
 )
 
-const renderClassList = (cvModule: string, clazzes : Array<CvClassInfoT>) => (
+const renderClassList = (cvModule: string, clazzes : Array<CvClassInfoT>, onLinkClicked: void => void) => (
   <ClassList>
     {
       clazzes.map(clazz => (
         <CollapsibleList
           key={clazz.className}
-          renderHeaderText={() => renderClassHeader(cvModule, clazz.className)}
+          renderHeaderText={() => renderClassHeader(cvModule, clazz.className, onLinkClicked)}
           headerCss={classListHeaderCss}
           itemsCss={classListItemsCss}
           isCollapsible={clazz.classFnNames.length > 5}
         >
-          { clazz.classFnNames.map(fnName => renderFunctionItem(cvModule, fnName)) }
+          { clazz.classFnNames.map(fnName => renderFunctionItem(cvModule, fnName, onLinkClicked)) }
         </CollapsibleList>
       ))
     }
@@ -109,7 +111,8 @@ const renderClassList = (cvModule: string, clazzes : Array<CvClassInfoT>) => (
 )
 
 type Props = {
-  apiTree: Array<CvModuleTreeT>
+  apiTree: Array<CvModuleTreeT>,
+  onLinkClicked: void => void
 }
 
 export default class extends React.Component<Props> {
@@ -139,8 +142,8 @@ export default class extends React.Component<Props> {
               headerCss={moduleListHeaderCss}
               itemsCss={moduleListItemsCss}
             >
-              { renderClassList(cvModule.cvModule, cvModule.cvClasses) }
-              { cvModule.cvFnNames.map(fnName => renderFunctionItem(cvModule.cvModule, fnName)) }
+              { renderClassList(cvModule.cvModule, cvModule.cvClasses, this.props.onLinkClicked) }
+              { cvModule.cvFnNames.map(fnName => renderFunctionItem(cvModule.cvModule, fnName, this.props.onLinkClicked)) }
             </CollapsibleList>
           ))
         }

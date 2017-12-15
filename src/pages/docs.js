@@ -139,6 +139,7 @@ const maxMobileWidth = 780
 export default reduxify(class extends React.Component<Props, State> {
   toggleMenu: Function
   onWindowResized: Function
+  onApiTreeLinkClicked: Function
 
   static getInitialProps({ req, query, store } : any) : Props {
     const isServer = !!req
@@ -165,6 +166,7 @@ export default reduxify(class extends React.Component<Props, State> {
     super(props)
     this.toggleMenu = this.toggleMenu.bind(this)
     this.onWindowResized = this.onWindowResized.bind(this)
+    this.onApiTreeLinkClicked = this.onApiTreeLinkClicked.bind(this)
   }
 
   state = {
@@ -209,6 +211,12 @@ export default reduxify(class extends React.Component<Props, State> {
     }
   }
 
+  onApiTreeLinkClicked() {
+    if (this.state.isMobileView) {
+      this.toggleMenu()
+    }
+  }
+
   toggleMenu() {
     this.setState({
       isMenuVisible: !this.state.isMenuVisible
@@ -236,7 +244,10 @@ export default reduxify(class extends React.Component<Props, State> {
                 value={this.props.apiTreeFilter}
                 onInputChanged={this.props.updateApiTreeFilter}
               />
-              <ApiTree apiTree={filteredApiTree} />
+              <ApiTree
+                apiTree={filteredApiTree}
+                onLinkClicked={this.onApiTreeLinkClicked}
+              />
             </Menu>
             <Content>
               <div>

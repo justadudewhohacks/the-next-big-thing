@@ -3,9 +3,11 @@ import Router from 'next/router'
 
 const noAsPath = '#__noAsPath__'
 
-export default ({ children, href, as }) => {
+export default ({ children, onClick, href, as }) => {
   const handleClick = async (e) => {
     e.preventDefault()
+
+    onClick()
 
     await Router.push(href, as)
 
