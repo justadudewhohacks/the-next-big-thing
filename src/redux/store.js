@@ -17,7 +17,7 @@ module.exports = function (
       docs: docsReducer
     }),
     initialState,
-    composeWithDevTools(applyMiddleware(thunkMiddleware, logger))
+    composeWithDevTools(process.env.NODE_ENV === 'production' ? applyMiddleware(thunkMiddleware) : applyMiddleware(thunkMiddleware, logger))
   )
 }
 

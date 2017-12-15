@@ -10,9 +10,16 @@ import type { CvModuleT } from 'types/CvModule'
 
 import ApiTree from 'components/ApiTree'
 import ModuleDocs from 'components/ModuleDocs'
+import SearchField from 'components/SearchField'
 
 import initStore from 'store'
-import { updateApiTree, cacheCvModule, fetchCvModule, displayCvModule } from 'actions'
+import {
+  updateApiTree,
+  cacheCvModule,
+  fetchCvModule,
+  displayCvModule,
+  updateApiTreeFilter
+} from 'actions'
 
 const PageWrapper = styled.div`
   font-family: 'Open Sans', sans-serif;
@@ -78,6 +85,8 @@ const ContentHeader = styled.div`
 `
 
 const Menu = styled.div`
+  display: flex;
+  flex-direction: column;
   height: 100%;
   min-width: 260px;
   max-width: 260px;
@@ -93,10 +102,11 @@ const Menu = styled.div`
 `
 
 type Props = {
-  apiTree: Array<CvModuleTreeT>,
+  apiTreeFilter: string,
+  filteredApiTree: Array<CvModuleTreeT>,
+  updateApiTreeFilter: string => any,
   displayedCvModule: string,
-  displayedCvModuleDocs: CvModuleT,
-  isCvModuleCached: string => boolean
+  displayedCvModuleDocs: CvModuleT
 }
 
 type State = {
@@ -108,19 +118,17 @@ const reduxify = withRedux(
   initStore,
   (state) => {
     const { docs } = state
-    const { apiTree, cvModules, displayedCvModule } = docs
+    const { filteredApiTree, cvModules, displayedCvModule } = docs
     const displayedCvModuleDocs = cvModules[displayedCvModule]
-    console.log(cvModules)
-    console.log(displayedCvModuleDocs)
+
     return ({
-      apiTree,
+      filteredApiTree,
       displayedCvModule,
       displayedCvModuleDocs
     })
   },
   dispatch => ({
-    updateApiTree: bindActionCreators(updateApiTree, dispatch),
-    cacheCvModule: bindActionCreators(cacheCvModule, dispatch)
+    updateApiTreeFilter: bindActionCreators(updateApiTreeFilter, dispatch)
   })
 )
 
@@ -137,7 +145,7 @@ export default reduxify(class extends React.Component<Props, State> {
       const { apiTree, cvModuleDocs } = query
       store.dispatch(updateApiTree(apiTree))
       store.dispatch(cacheCvModule({ cvModule, cvModuleDocs }))
-      return { apiTree, displayedCvModule: cvModule, cvModuleDocs }
+      return { filteredApiTree: apiTree, displayedCvModule: cvModule, cvModuleDocs }
     }
 
     // TODO
@@ -204,7 +212,7 @@ export default reduxify(class extends React.Component<Props, State> {
   }
 
   render() : any {
-    const { apiTree, displayedCvModuleDocs, displayedCvModule } = this.props
+    const { filteredApiTree, displayedCvModuleDocs, displayedCvModule } = this.props
     console.log('render')
 
     return (
@@ -220,9 +228,11 @@ export default reduxify(class extends React.Component<Props, State> {
           </Navbar>
           <MainContainer>
             <Menu translateX={this.state.isMenuVisible || !this.state.isMobileView ? 0 : -260}>
-              <ApiTree
-                apiTree={apiTree}
+              <SearchField
+                value={this.props.apiTreeFilter}
+                onInputChanged={this.props.updateApiTreeFilter}
               />
+              <ApiTree apiTree={filteredApiTree} />
             </Menu>
             <Content>
               <div>

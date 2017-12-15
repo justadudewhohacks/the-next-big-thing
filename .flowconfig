@@ -12,7 +12,6 @@
 [options]
 module.system.node.resolve_dirname=node_modules
 module.system.node.resolve_dirname=src
-module.system.node.resolve_dirname=src/actions
-module.system.node.resolve_dirname=src/store
+module.system.node.resolve_dirname=src/redux
 
 [strict]

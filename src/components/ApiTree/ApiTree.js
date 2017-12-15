@@ -8,7 +8,6 @@ import type { CvModuleTreeT } from 'types/CvModuleTree'
 import type { CvClassInfoT } from 'types/CvClassInfo'
 
 import CollapsibleList from '../CollapsibleList'
-import SearchField from '../SearchField'
 
 const listCss = css`
   list-style: none;
@@ -60,19 +59,13 @@ const ClassList = styled.ul`
   ${listCss}
 `
 
-const ModuleList = styled.ul`
+const ApiTree = styled.ul`
   ${listCss}
   font-size: 14px;
   padding: 0;
   display: inline-block;
   background: #fafafa;
   overflow-y: auto;
-`
-
-const ApiTree = styled.div`
-  height: 100%;
-  display: flex;
-  flex-direction: column;
 `
 
 const renderFunctionItem = (cvModule: string, fn: string) => (
@@ -121,56 +114,11 @@ type Props = {
   apiTree: Array<CvModuleTreeT>
 }
 
-type State = {
-  searchValue: string
-}
-
-export default class extends React.Component<Props, State> {
-  getFilteredApiTree: Function
-  onSearchValueChanged: Function
-
-  constructor(props: Props) {
-    super(props)
-    this.getFilteredApiTree = this.getFilteredApiTree.bind(this)
-    this.onSearchValueChanged = this.onSearchValueChanged.bind(this)
-  }
-
-  state = {
-    searchValue: ''
-  }
-
+export default class extends React.Component<Props> {
   shouldComponentUpdate(props: Props) : boolean {
     const hasChanged = props.apiTree !== this.props.apiTree
     console.log('shouldComponentUpdate ApiTree?', hasChanged)
     return hasChanged
-  }
-
-  getFilteredApiTree() : Array<CvModuleTreeT> {
-    if (!this.state.searchValue) {
-      return this.props.apiTree
-    }
-
-    const filterByFnNameIncludes = fnName =>
-      fnName.toLowerCase().includes(this.state.searchValue.toLowerCase())
-
-    const isNotEmpty = arr => !!arr.length
-
-    return this.props.apiTree.map(
-      moduleTree => ({
-        ...moduleTree,
-        cvClasses: moduleTree.cvClasses
-          .map(cvClass => ({
-            ...cvClass,
-            classFnNames: cvClass.classFnNames.filter(filterByFnNameIncludes)
-          }))
-          .filter(cvClass => isNotEmpty(cvClass.classFnNames)),
-        cvFnNames: moduleTree.cvFnNames.filter(filterByFnNameIncludes)
-      })
-    )
-  }
-
-  onSearchValueChanged(searchValue: string) {
-    this.setState({ searchValue })
   }
 
   componentDidUpdate() {
@@ -183,28 +131,21 @@ export default class extends React.Component<Props, State> {
 
   render() : any {
     console.log('render ApiTree')
-    const apiTree = this.getFilteredApiTree()
     return (
       <ApiTree>
-        <SearchField
-          value={this.state.searchValue}
-          onInputChanged={this.onSearchValueChanged}
-        />
-        <ModuleList>
-          {
-            apiTree.map(cvModule => (
-              <CollapsibleList
-                key={cvModule.cvModule}
-                renderHeaderText={() => cvModule.cvModule}
-                headerCss={moduleListHeaderCss}
-                itemsCss={moduleListItemsCss}
-              >
-                { renderClassList(cvModule.cvModule, cvModule.cvClasses) }
-                { cvModule.cvFnNames.map(fnName => renderFunctionItem(cvModule.cvModule, fnName)) }
-              </CollapsibleList>
-            ))
-          }
-        </ModuleList>
+        {
+          this.props.apiTree.map(cvModule => (
+            <CollapsibleList
+              key={cvModule.cvModule}
+              renderHeaderText={() => cvModule.cvModule}
+              headerCss={moduleListHeaderCss}
+              itemsCss={moduleListItemsCss}
+            >
+              { renderClassList(cvModule.cvModule, cvModule.cvClasses) }
+              { cvModule.cvFnNames.map(fnName => renderFunctionItem(cvModule.cvModule, fnName)) }
+            </CollapsibleList>
+          ))
+        }
       </ApiTree>
     )
   }
