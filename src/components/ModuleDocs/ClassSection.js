@@ -13,29 +13,38 @@ type Props = {
   cvClassWithFns: CvClassWithFnsT
 }
 
-export default ({ cvClassWithFns }: Props) => (
-  <div>
-    <Anchor name={cvClassWithFns.className} />
-    <h2> { cvClassWithFns.className } </h2>
-    {
-      cvClassWithFns.fields.length
-        ? <AccessorsSection {...cvClassWithFns} />
-        : null
-    }
-    {
-      cvClassWithFns.constructors.length
-        ? (
-          <ConstructorsSection
-            constructors={cvClassWithFns.constructors}
-            className={cvClassWithFns.className}
-          />
-        )
-        : null
-    }
-    {
-      cvClassWithFns.classFns.length
-        ? <FunctionsSection fns={cvClassWithFns.classFns} heading="functions" />
-        : null
-    }
-  </div>
-)
+export default ({ cvClassWithFns }: Props) => {
+  const { className, fields, constructors, classFns } = cvClassWithFns
+  return (
+    <div>
+      <Anchor name={className} />
+      <h2> { className } </h2>
+      {
+        fields.length
+          ? <AccessorsSection {...cvClassWithFns} />
+          : null
+      }
+      {
+        constructors.length
+          ? (
+            <ConstructorsSection
+              constructors={constructors}
+              className={className}
+            />
+          )
+          : null
+      }
+      {
+        classFns.length
+          ? (
+            <FunctionsSection
+              anchorHashPrefix={`${className}-`}
+              fns={classFns}
+              heading="functions"
+            />
+          )
+          : null
+      }
+    </div>
+  )
+}

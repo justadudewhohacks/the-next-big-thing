@@ -13,16 +13,17 @@ const FnHeading = styled.h4`
 
 type PropFn = {
   fns: Array<CvFnT>,
-  heading: string
+  heading: string,
+  anchorHashPrefix?: string
 }
 
-export default ({ fns, heading } : PropFn) => (
+const FunctionsSection = ({ fns, heading, anchorHashPrefix } : PropFn) => (
   <div>
     <h3> { heading } </h3>
     {
       fns.map(fn => (
         <div key={fn.fnName}>
-          <Anchor name={fn.fnName} />
+          <Anchor name={`${anchorHashPrefix}${fn.fnName}`} />
           <FnHeading> {fn.fnName} </FnHeading>
           {
             fn.signatures.map(s => (
@@ -38,3 +39,9 @@ export default ({ fns, heading } : PropFn) => (
     }
   </div>
 )
+
+FunctionsSection.defaultProps = {
+  anchorHashPrefix: ''
+}
+
+export default FunctionsSection

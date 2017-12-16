@@ -68,11 +68,11 @@ const ApiTree = styled.ul`
   overflow-y: auto;
 `
 
-const renderFunctionItem = (cvModule: string, fn: string, onLinkClicked: void => void) => (
+const renderFunctionItem = (cvModule: string, fn: string, onLinkClicked: void => void, anchorHashPrefix?: string = '') => (
   <FunctionItem key={fn}>
     <HashableLink
       href={`/docs?cvModule=${cvModule}`}
-      as={`/docs/${cvModule}#${fn}`}
+      as={`/docs/${cvModule}#${anchorHashPrefix}${fn}`}
       onClick={onLinkClicked}
     >
       { fn }
@@ -103,7 +103,7 @@ const renderClassList = (cvModule: string, clazzes : Array<CvClassInfoT>, onLink
           itemsCss={classListItemsCss}
           isCollapsible={clazz.classFnNames.length > 5}
         >
-          { clazz.classFnNames.map(fnName => renderFunctionItem(cvModule, fnName, onLinkClicked)) }
+          { clazz.classFnNames.map(fnName => renderFunctionItem(cvModule, fnName, onLinkClicked, `${clazz.className}-`)) }
         </CollapsibleList>
       ))
     }
