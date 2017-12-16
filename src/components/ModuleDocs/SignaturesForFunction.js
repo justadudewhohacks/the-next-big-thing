@@ -1,15 +1,19 @@
 /* @flow */
 
 import React from 'react'
+import styled from 'styled-components'
 
 import type { CvFnSignatureT } from 'types/CvFnSignature'
 
 import Code from './Code'
+import CodeLine from './CodeLine'
+import Colon from './Colon'
+import Void from './Void'
 import Type from './Type'
 import PromiseType from './PromiseType'
 import Result from './Result'
 import ResultAlias from './ResultAlias'
-import FunctionSignature from './FunctionSignature'
+import FunctionBody from './FunctionBody'
 
 type AsyncFnProps = {
   signature: CvFnSignatureT,
@@ -21,23 +25,22 @@ const AsyncFunctionSignatures = ({ signature, fnName, returnTypeComponent } : As
   const sharedProps = { signature, fnName }
   return (
     <span>
-      <FunctionSignature
-        {...sharedProps}
-        returnValueComponent={
-          <PromiseType>
-            { returnTypeComponent || '' }
-          </PromiseType>
-        }
-      />
-      <FunctionSignature
-        {...sharedProps}
-        callbackResultComponent={
-          <span>
-            { returnTypeComponent }
-            <span> {'res'} </span>
-          </span>
-        }
-      />
+      <CodeLine>
+        <FunctionBody
+          {...sharedProps}
+        />
+      </CodeLine>
+      <CodeLine>
+        <FunctionBody
+          {...sharedProps}
+          callbackResultComponent={
+            <span>
+              { returnTypeComponent }
+              <span> {'res'} </span>
+            </span>
+          }
+        />
+      </CodeLine>
     </span>
   )
 }
@@ -48,6 +51,15 @@ type Props = {
   hasAsync: boolean
 }
 
+const FlexContainer = styled.div`
+  display: flex;
+`
+
+const ReturnValue = styled.span`
+  display: flex;
+  justify-content: space-between;
+`
+
 export default ({ signature, fnName, hasAsync } : Props) => {
   const { returnValues } = signature
   const hasReturnVal = returnValues && returnValues.length
@@ -55,7 +67,7 @@ export default ({ signature, fnName, hasAsync } : Props) => {
 
   const returnTypeComponent = (
     !hasReturnVal
-      ? null
+      ? <Void />
       : useResultAlias
         ? <Result />
         : <Type {...returnValues[0]} />
@@ -63,11 +75,7 @@ export default ({ signature, fnName, hasAsync } : Props) => {
 
   const syncFunctionSignatureProps = {
     signature,
-    fnName,
-    returnValueComponent:
-      hasReturnVal
-        ? <span> { returnTypeComponent }{ ' : ' } </span>
-        : returnTypeComponent
+    fnName
   }
 
   const asyncFunctionSignaturesProps = {
@@ -83,12 +91,49 @@ export default ({ signature, fnName, hasAsync } : Props) => {
           ? <ResultAlias returnValues={returnValues} />
           : null
       }
-      <FunctionSignature {...syncFunctionSignatureProps} />
-      {
-        hasAsync
-          ? <AsyncFunctionSignatures {...asyncFunctionSignaturesProps} />
-          : null
-      }
+      <FlexContainer>
+        <div>
+          <CodeLine>
+            {
+              <ReturnValue>
+                { returnTypeComponent }
+                <Colon />
+              </ReturnValue>
+            }
+          </CodeLine>
+          {
+            hasAsync
+            ? ([
+              <CodeLine>
+                <ReturnValue>
+                  <PromiseType>
+                    { returnTypeComponent }
+                  </PromiseType>
+                  <Colon />
+                </ReturnValue>
+              </CodeLine>,
+              <CodeLine>
+                {
+                  <ReturnValue>
+                    <Void />
+                    <Colon />
+                  </ReturnValue>
+                }
+              </CodeLine>
+            ]) : null
+          }
+        </div>
+        <div>
+          <CodeLine>
+            <FunctionBody {...syncFunctionSignatureProps} />
+          </CodeLine>
+          {
+            hasAsync
+              ? <AsyncFunctionSignatures {...asyncFunctionSignaturesProps} />
+              : null
+          }
+        </div>
+      </FlexContainer>
     </Code>
   )
 }
