@@ -1,8 +1,8 @@
 /* @flow */
 
 import type { CvClassT } from './CvClass'
-import type { CvFnT } from './CvFn'
+import type { CategorizedCvFnsT } from './CategorizedCvFns'
 
 export type CvClassWithFnsT = CvClassT & {
-  classFns: Array<CvFnT>
+  classFnsByCategory: Array<CategorizedCvFnsT>
 }

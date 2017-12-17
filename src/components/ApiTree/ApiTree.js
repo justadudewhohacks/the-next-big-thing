@@ -55,6 +55,12 @@ const FunctionItem = styled.li`
   ${listItemCss}
 `
 
+const CategoryHeader = styled.li`
+  ${listItemCss}
+  margin-top: 5px;
+  font-weight: bold;
+`
+
 const ClassList = styled.ul`
   ${listCss}
 `
@@ -101,9 +107,22 @@ const renderClassList = (cvModule: string, clazzes : Array<CvClassInfoT>, onLink
           renderHeaderText={() => renderClassHeader(cvModule, clazz.className, onLinkClicked)}
           headerCss={classListHeaderCss}
           itemsCss={classListItemsCss}
-          isCollapsible={clazz.classFnNames.length > 5}
+          isCollapsible={clazz.classFnNamesByCategory.reduce((numFns, fns) => numFns + fns.classFnNames.length, 0) > 5}
         >
-          { clazz.classFnNames.map(fnName => renderFunctionItem(cvModule, fnName, onLinkClicked, `${clazz.className}-`)) }
+          {
+            clazz.classFnNamesByCategory.map(categorizedFns => (
+              <div>
+                <CategoryHeader>
+                  { categorizedFns.category === 'default' ? 'functions' : categorizedFns.category }
+                </CategoryHeader>
+                {
+                  categorizedFns.classFnNames.map(fnName =>
+                    renderFunctionItem(cvModule, fnName, onLinkClicked, `${clazz.className}-`)
+                  )
+                }
+              </div>
+            ))
+          }
         </CollapsibleList>
       ))
     }

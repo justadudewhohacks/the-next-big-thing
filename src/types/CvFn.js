@@ -8,6 +8,7 @@ export type CvFnT = {
   cvModule: string,
   owner: string,
   hasAsync: boolean,
+  category?: string,
   signatures: Array<CvFnSignatureT>
 }
 
@@ -16,6 +17,7 @@ const CvFn = {
   cvModule: { type: String, required: true },
   owner: { type: String, required: true },
   hasAsync: { type: Boolean, required: true },
+  category: { type: String },
   signatures: [
     {
       returnValues: { type: [Arg] },

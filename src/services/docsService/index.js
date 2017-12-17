@@ -17,7 +17,24 @@ const mlabPw = 'opencv4nodejs'
 const connect = makeConnect(mongoose, `mongodb://${mlabUser}:${mlabPw}@ds125556.mlab.com:25556/opencv4nodejs`)
 
 const queries = makeQueries(makeSchemas(mongoose))
-const allModules = ['core', 'imgproc', 'calib3d', 'face', 'dnn', 'features2d', 'io', 'machinelearning', 'objdetect']
+const allModules = [
+  'core',
+  'imgproc',
+  'calib3d',
+  'face',
+  'dnn',
+  'features2d',
+  'io',
+  'machinelearning',
+  'objdetect',
+  'photo',
+  'text',
+  'tracking',
+  'video',
+  'ximgproc',
+  'xfeatures2d'
+]
+
 const hasCvModule = makeHasCvModule(allModules)
 const getApiTree = makeGetApiTree(
   allModules,

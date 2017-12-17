@@ -32,9 +32,16 @@ const getFilteredApiTree = function (
       cvClasses: moduleTree.cvClasses
         .map(cvClass => ({
           ...cvClass,
-          classFnNames: cvClass.classFnNames.filter(nameIncludes)
+          classFnNamesByCategory: cvClass.classFnNamesByCategory
+            .map(categorizedFns => ({
+              ...categorizedFns,
+              classFnNames: categorizedFns.classFnNames.filter(nameIncludes)
+            }))
+            .filter(categorizedFns => isNotEmpty(categorizedFns.classFnNames))
         }))
-        .filter(cvClass => nameIncludes(cvClass.className) || isNotEmpty(cvClass.classFnNames)),
+        .filter(cvClass => nameIncludes(cvClass.className)
+          || isNotEmpty(cvClass.classFnNamesByCategory)
+        ),
       cvFnNames: moduleTree.cvFnNames.filter(nameIncludes)
     })
   )

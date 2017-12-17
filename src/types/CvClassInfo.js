@@ -2,5 +2,8 @@
 
 export type CvClassInfoT = {
   className: string,
-  classFnNames: Array<string>
+  classFnNamesByCategory: Array<{
+    category: string,
+    classFnNames: Array<string>
+  }>
 }

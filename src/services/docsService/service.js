@@ -4,9 +4,24 @@ import type { CvModuleTreeT } from 'types/CvModuleTree'
 import type { CvModuleT } from 'types/CvModule'
 import type { CvClassT } from 'types/CvClass'
 import type { CvFnT } from 'types/CvFn'
+import type { CategorizedCvFnsT } from 'types/CategorizedCvFns'
+
+const defaultCategory = 'default'
+
+function getCategory(category?: string) : string {
+  return category || defaultCategory
+}
 
 const isClassFunction = s => s.owner !== 'cv'
 const isCvFunction = s => !isClassFunction(s)
+
+function categorizeFunctions(functions: Array<CvFnT>) : Array<CategorizedCvFnsT> {
+  return Array.from(new Set(functions.map(fn => getCategory(fn.category))).values())
+    .map(category => ({
+      category,
+      fns: functions.filter(fn => getCategory(fn.category) === category)
+    }))
+}
 
 exports.makeHasCvModule = function (allModules: Array<string>) : string => boolean {
   return function (cvModule: string) : boolean {
@@ -29,7 +44,8 @@ exports.makeGetApiTree = function makeGetApiTree(
 
       const cvClasses = classNames.map(c => ({
         className: c,
-        classFnNames: functions.filter(s => c === s.owner).map(s => s.fnName)
+        classFnNamesByCategory: categorizeFunctions(functions.filter(s => c === s.owner))
+          .map(({ category, fns }) => ({ category, classFnNames: fns.map(fn => fn.fnName) }))
       }))
 
       return ({
@@ -56,7 +72,9 @@ exports.makeGetCvModuleDocs = function (
       fields: c.fields,
       constructors: c.constructors,
       cvModule,
-      classFns: functionsByModule.filter(s => c.className === s.owner)
+      classFnsByCategory: categorizeFunctions(
+        functionsByModule.filter(s => c.className === s.owner)
+      )
     }))
 
     const cvFns = functionsByModule.filter(isCvFunction)
