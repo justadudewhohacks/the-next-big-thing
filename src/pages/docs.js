@@ -38,7 +38,7 @@ const PageContainer = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  max-width: 960px;
+  max-width: 1200px;
   margin: auto;
   left: 0;
   right: 0;
