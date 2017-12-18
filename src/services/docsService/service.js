@@ -15,12 +15,17 @@ function getCategory(category?: string) : string {
 const isClassFunction = s => s.owner !== 'cv'
 const isCvFunction = s => !isClassFunction(s)
 
-function categorizeFunctions(functions: Array<CvFnT>) : Array<CategorizedCvFnsT> {
-  return Array.from(new Set(functions.map(fn => getCategory(fn.category))).values())
-    .map(category => ({
-      category,
-      fns: functions.filter(fn => getCategory(fn.category) === category)
-    }))
+function categorizeFunctions(
+  functions: Array<CvFnT>,
+  className?: string
+) : Array<CategorizedCvFnsT> {
+  const categories = className === 'Mat'
+    ? ['operators', 'default', 'imgproc functions', 'calib3d functions']
+    : Array.from(new Set(functions.map(fn => getCategory(fn.category))).values())
+  return categories.map(category => ({
+    category,
+    fns: functions.filter(fn => getCategory(fn.category) === category)
+  }))
 }
 
 exports.makeHasCvModule = function (allModules: Array<string>) : string => boolean {
@@ -44,7 +49,7 @@ exports.makeGetApiTree = function makeGetApiTree(
 
       const cvClasses = classNames.map(c => ({
         className: c,
-        classFnNamesByCategory: categorizeFunctions(functions.filter(s => c === s.owner))
+        classFnNamesByCategory: categorizeFunctions(functions.filter(s => c === s.owner), c)
           .map(({ category, fns }) => ({ category, classFnNames: fns.map(fn => fn.fnName) }))
       }))
 
@@ -73,7 +78,8 @@ exports.makeGetCvModuleDocs = function (
       constructors: c.constructors,
       cvModule,
       classFnsByCategory: categorizeFunctions(
-        functionsByModule.filter(s => c.className === s.owner)
+        functionsByModule.filter(s => c.className === s.owner),
+        c.className
       )
     }))
 
