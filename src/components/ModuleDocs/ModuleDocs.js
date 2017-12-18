@@ -40,6 +40,13 @@ export default ({ cvModule, cvModuleDocs } : Props) => (
         <HLine />
       )
     }
-    <FunctionsSection fns={cvModuleDocs.cvFns} heading={`${cvModule} functions`} />
+    {
+      cvModuleDocs.cvFns.length ? (
+        <FunctionsSection
+          fns={cvModuleDocs.cvFns}
+          heading={`${cvModule} functions`}
+        />
+      ) : null
+    }
   </ModuleDocs>
 )
