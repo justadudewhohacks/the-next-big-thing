@@ -31,22 +31,41 @@ type Props = {
   cvModuleDocs: CvModuleT
 }
 
-export default ({ cvModule, cvModuleDocs } : Props) => (
-  <ModuleDocs>
-    {
-      joinComponents(
-        cvModuleDocs.cvClasses
-          .map(cvClassWithFns => <ClassSection cvClassWithFns={cvClassWithFns} />),
-        <HLine />
-      )
-    }
-    {
-      cvModuleDocs.cvFns.length ? (
-        <FunctionsSection
-          fns={cvModuleDocs.cvFns}
-          heading={`${cvModule} functions`}
-        />
-      ) : null
-    }
-  </ModuleDocs>
-)
+export default class extends React.Component<Props> {
+  shouldComponentUpdate(props: Props) : boolean {
+    const hasChanged = props.cvModule !== this.props.cvModule
+    console.log('shouldComponentUpdate ModuleDocs?', hasChanged)
+    return hasChanged
+  }
+
+  componentDidUpdate() {
+    console.log('componentDidUpdate ModuleDocs')
+  }
+
+  componentDidMount() {
+    console.log('componentDidMount ModuleDocs')
+  }
+
+  render() : any {
+    const { cvModuleDocs, cvModule } = this.props
+    return (
+      <ModuleDocs>
+        {
+          joinComponents(
+            cvModuleDocs.cvClasses
+              .map(cvClassWithFns => <ClassSection cvClassWithFns={cvClassWithFns} />),
+            <HLine />
+          )
+        }
+        {
+          cvModuleDocs.cvFns.length ? (
+            <FunctionsSection
+              fns={cvModuleDocs.cvFns}
+              heading={`${cvModule} functions`}
+            />
+          ) : null
+        }
+      </ModuleDocs>
+    )
+  }
+}

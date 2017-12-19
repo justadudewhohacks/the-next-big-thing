@@ -63,6 +63,7 @@ const Content = styled.div`
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  flex: 1;
 `
 
 const MenuIcon = styled.i`
@@ -174,20 +175,13 @@ export default reduxify(class extends React.Component<Props, State> {
     isMobileView: false
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log(this.props)
-    console.log(nextProps)
-    console.log(this.props.apiTree === nextProps.apiTree)
-    console.log('componentWillReceiveProps')
-  }
-
   componentDidUpdate() {
-    console.log('componentDidUpdate')
+    console.log('componentDidUpdate docsPage')
   }
 
   componentDidMount() {
     window.router = Router
-    console.log('componentDidMount')
+    console.log('componentDidMount docsPage')
     this.onWindowResized();
     window.addEventListener('resize', this.onWindowResized);
   }
@@ -225,7 +219,6 @@ export default reduxify(class extends React.Component<Props, State> {
 
   render() : any {
     const { filteredApiTree, displayedCvModuleDocs, displayedCvModule } = this.props
-    console.log('render')
 
     return (
       <PageWrapper>

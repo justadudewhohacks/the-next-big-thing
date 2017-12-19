@@ -59,6 +59,7 @@ const CategoryHeader = styled.li`
   ${listItemCss}
   margin-top: 5px;
   font-weight: bold;
+  cursor: default;
 `
 
 const ClassList = styled.ul`

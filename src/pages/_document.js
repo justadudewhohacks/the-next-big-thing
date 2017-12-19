@@ -18,6 +18,7 @@ export default class MyDocument extends Document {
           <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
           <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" />
           <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.min.js" />
           {this.props.styleTags}
         </Head>
         <body style={{ margin: 0, padding: 0 }}>
