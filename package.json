@@ -8,6 +8,7 @@
     "prod": "set NODE_ENV=production&&nodemon -w src/server.js -r babel-core/register src/server.js",
     "build": "next build src",
     "start": "node -r babel-core/register src/server.js",
+    "postinstall": "next build src",
     "test": "mocha ./tests --R"
   },
   "keywords": [],
