@@ -14,6 +14,15 @@ export default class MyDocument extends Document {
     return (
       <html lang="en">
         <Head>
+          <script async src="https://www.googletagmanager.com/gtag/js?id=UA-109709749-1"></script>
+          <script dangerouslySetInnerHTML={{
+            __html: `
+            window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'UA-109709749-1');
+            `
+          }} />
           <title>My page</title>
           <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
           <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" />
