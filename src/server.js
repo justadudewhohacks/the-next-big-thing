@@ -46,18 +46,15 @@ app.prepare()
     }
 
     server.get('/docs', (req, res) => {
-      console.log('requesting: /docs (redirect)')
       res.redirect('/docs/core')
     })
     server.get('/docs/:cvModule', renderDocsPage)
 
     server.get('/', (req, res) => {
-      console.log('requesting: /', req.originalUrl)
       res.redirect('/docs')
     })
 
     server.get('*', (req, res) => {
-      console.log('requesting: *', req.originalUrl)
       handle(req, res)
     })
 

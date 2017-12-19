@@ -152,10 +152,8 @@ export default reduxify(class extends React.Component<Props, State> {
       return { filteredApiTree: apiTree, displayedCvModule: cvModule, cvModuleDocs }
     }
 
-    console.log('getInitialProps')
     const isCvModuleCached = Object.keys(store.getState().docs.cvModules).some(m => m === cvModule)
     if (isCvModuleCached) {
-      console.log('cvModule found in cache:', cvModule)
       store.dispatch(displayCvModule(cvModule))
     } else {
       store.dispatch(fetchCvModule(cvModule))
@@ -175,13 +173,7 @@ export default reduxify(class extends React.Component<Props, State> {
     isMobileView: false
   }
 
-  componentDidUpdate() {
-    console.log('componentDidUpdate docsPage')
-  }
-
   componentDidMount() {
-    window.router = Router
-    console.log('componentDidMount docsPage')
     this.onWindowResized();
     window.addEventListener('resize', this.onWindowResized);
   }

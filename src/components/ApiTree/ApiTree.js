@@ -137,21 +137,10 @@ type Props = {
 
 export default class extends React.Component<Props> {
   shouldComponentUpdate(props: Props) : boolean {
-    const hasChanged = props.apiTree !== this.props.apiTree
-    console.log('shouldComponentUpdate ApiTree?', hasChanged)
-    return hasChanged
-  }
-
-  componentDidUpdate() {
-    console.log('componentDidUpdate ApiTree')
-  }
-
-  componentDidMount() {
-    console.log('componentDidMount ApiTree')
+    return props.apiTree !== this.props.apiTree
   }
 
   render() : any {
-    console.log('render ApiTree')
     return (
       <ApiTree>
         {

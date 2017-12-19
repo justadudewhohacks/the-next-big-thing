@@ -33,17 +33,7 @@ type Props = {
 
 export default class extends React.Component<Props> {
   shouldComponentUpdate(props: Props) : boolean {
-    const hasChanged = props.cvModule !== this.props.cvModule
-    console.log('shouldComponentUpdate ModuleDocs?', hasChanged)
-    return hasChanged
-  }
-
-  componentDidUpdate() {
-    console.log('componentDidUpdate ModuleDocs')
-  }
-
-  componentDidMount() {
-    console.log('componentDidMount ModuleDocs')
+    return props.cvModule !== this.props.cvModule
   }
 
   render() : any {
