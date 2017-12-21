@@ -63,7 +63,7 @@ const ReturnValue = styled.span`
 export default ({ signature, fnName, hasAsync } : Props) => {
   const { returnValues } = signature
   const hasReturnVal = returnValues && returnValues.length
-  const useResultAlias = hasReturnVal && returnValues.length > 2
+  const useResultAlias = hasReturnVal && returnValues.length > 1
 
   const returnTypeComponent = (
     !hasReturnVal
